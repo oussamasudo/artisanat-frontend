@@ -200,7 +200,7 @@ export default function HomePage() {
         }
         .stats-item:last-child { border-right: none; }
         .stats-item:first-child { padding-left: 0; }
-        /* ================= MOBILE ================= */
+    /* ================= MOBILE ================= */
 
 @media (max-width: 768px) {
 
@@ -209,14 +209,14 @@ export default function HomePage() {
     display: none;
   }
 
-  /* rendre le header vertical */
+  /* header vertical */
   header > div > div {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
 
-  /* bouton classifier full width */
+  /* bouton classifier */
   header .btn-primary {
     width: 100%;
     justify-content: center;
@@ -233,63 +233,14 @@ export default function HomePage() {
     padding: 1.5rem 0;
   }
 
-  /* sections padding */
+  /* sections */
   section {
     padding: 3rem 1rem !important;
   }
 
-  /* titre */
+  /* titres */
   h2 {
     font-size: 2.2rem !important;
-  }
-
-}
-
-  nav {
-
-    display: none;
-
-  }
-
-
-  .stats-container {
-
-    flex-direction: column;
-
-  }
-
-
-  .stats-item {
-
-    border-right: none;
-
-    border-bottom: 1px solid rgba(184,136,42,0.2);
-
-    padding: 1.5rem 0;
-
-  }
-
-
-  section {
-
-    padding: 3rem 1rem !important;
-
-  }
-
-
-  h2 {
-
-    font-size: 2.2rem !important;
-
-  }
-
-
-  .btn-primary {
-
-    width: 100%;
-
-    justify-content: center;
-
   }
 
 }
