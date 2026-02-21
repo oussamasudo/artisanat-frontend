@@ -268,6 +268,106 @@ export default function ClassifierPage() {
         }
 
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+
+
+        /* ================= MOBILE CLASSIFIER ================= */
+
+@media (max-width: 768px) {
+
+
+  /* HEADER */
+
+  header > div > div {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 1rem;
+
+  }
+
+
+  /* HERO */
+
+  h2 {
+
+    font-size: 2rem !important;
+
+  }
+
+
+  /* MAIN GRID -> devient vertical */
+
+  main > div {
+
+    grid-template-columns: 1fr !important;
+
+  }
+
+
+  /* CAMERA BUTTONS */
+
+  video {
+
+    width: 100% !important;
+
+    height: auto !important;
+
+  }
+
+
+  /* RESULT CARD */
+
+  .confidence-track {
+
+    height: 6px;
+
+  }
+
+
+  /* BUTTONS */
+
+  .btn-primary,
+  .btn-ghost {
+
+    width: 100%;
+
+  }
+
+
+  /* UPLOAD ZONE */
+
+  .upload-zone {
+
+    padding: 2rem 1rem !important;
+
+  }
+
+
+  /* CRAFT LEGEND */
+
+  main > div:last-child > div {
+
+    grid-template-columns: repeat(2, 1fr) !important;
+
+  }
+
+
+  /* FOOTER */
+
+  footer div div {
+
+    flex-direction: column;
+
+    gap: 1rem;
+
+    text-align: center;
+
+  }
+
+}
       `}</style>
 
       <div style={{ minHeight: '100vh', background: 'var(--cream)' }}>
@@ -322,8 +422,7 @@ export default function ClassifierPage() {
 
         {/* MAIN CONTENT */}
         <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '4rem 2rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem', alignItems: 'start' }}>
-
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem', alignItems: 'start' }}>
             {/* LEFT COLUMN */}
             <motion.div
               initial={{ opacity: 0, x: -24 }}
@@ -641,7 +740,7 @@ export default function ClassifierPage() {
             <p className="section-label" style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
               ✦ Artisanats Reconnus ✦
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
               {Object.keys(craftNames).map((key, index) => (
                 <motion.div
                   key={key}

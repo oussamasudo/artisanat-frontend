@@ -200,7 +200,65 @@ export default function HomePage() {
         }
         .stats-item:last-child { border-right: none; }
         .stats-item:first-child { padding-left: 0; }
-      `}</style>
+        /* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+
+  nav {
+
+    display: none;
+
+  }
+
+
+  .stats-container {
+
+    flex-direction: column;
+
+  }
+
+
+  .stats-item {
+
+    border-right: none;
+
+    border-bottom: 1px solid rgba(184,136,42,0.2);
+
+    padding: 1.5rem 0;
+
+  }
+
+
+  section {
+
+    padding: 3rem 1rem !important;
+
+  }
+
+
+  h2 {
+
+    font-size: 2.2rem !important;
+
+  }
+
+
+  .btn-primary {
+
+    width: 100%;
+
+    justify-content: center;
+
+  }
+
+}
+      `
+      
+      
+      
+      }</style>
+      
 
       <div style={{ minHeight: '100vh', background: 'var(--cream)' }}>
 
@@ -214,7 +272,7 @@ export default function HomePage() {
         {/* HEADER */}
         <header style={{ background: 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50 }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',padding: '1rem 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2 }}>
                   <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
@@ -249,7 +307,7 @@ export default function HomePage() {
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, var(--cream), transparent)', zIndex: 1 }} />
 
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '6rem 2rem', position: 'relative', zIndex: 2, width: '100%' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '5rem', alignItems: 'center' }}>
 
               <motion.div
                 initial={{ opacity: 0, x: -40 }}
@@ -276,8 +334,7 @@ export default function HomePage() {
                   Chaque œuvre porte en elle l'âme d'une civilisation millénaire.
                 </p>
 
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <motion.button
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>                  <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     className="btn-primary"
@@ -302,7 +359,7 @@ export default function HomePage() {
               >
                 <div style={{ position: 'absolute', top: -16, left: -16, right: -16, bottom: -16, border: '1px solid rgba(212,169,74,0.4)', borderRadius: 4, zIndex: 0 }} />
                 <div style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, border: '1px solid rgba(212,169,74,0.2)', borderRadius: 3, zIndex: 0 }} />
-                <div style={{ position: 'relative', zIndex: 1, borderRadius: 4, overflow: 'hidden', height: 520, boxShadow: '0 32px 80px rgba(0,0,0,0.4)' }}>
+                <div style={{ position: 'relative', zIndex: 1, borderRadius: 4, overflow: 'hidden', height: 'clamp(280px, 50vw, 520px)', boxShadow: '0 32px 80px rgba(0,0,0,0.4)' }}>
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(196,98,45,0.3), rgba(27,79,114,0.2))', zIndex: 1 }} />
                   <Image src="/moroccan-hero.jpg" alt="Artisanat marocain traditionnel" fill style={{ objectFit: 'cover' }} />
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 2, background: 'linear-gradient(to top, rgba(26,18,8,0.9), transparent)', padding: '2.5rem 1.8rem 1.8rem' }}>
@@ -318,26 +375,44 @@ export default function HomePage() {
 
         {/* STATS BAR */}
         <div style={{ background: 'var(--ink)', padding: '3rem 0' }}>
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              {[
-                { num: '5', label: 'Artisanats Classifiés' },
-                { num: '12+', label: 'Siècles de Tradition' },
-                { num: '98%', label: "Précision de l'IA" },
-                { num: '10K+', label: 'Œuvres Analysées' },
-              ].map((stat, i) => (
-                <div key={i} className="stats-item">
-                  <p className="shimmer-text" style={{ fontSize: '2.6rem', fontWeight: 600, lineHeight: 1, fontFamily: 'Cormorant Garamond, serif' }}>
-                    {stat.num}
-                  </p>
-                  <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginTop: 8, fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+  <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+
+    <div className="stats-container" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+
+      {[
+        { num: '5', label: 'Artisanats Classifiés' },
+        { num: '12+', label: 'Siècles de Tradition' },
+        { num: '98%', label: "Précision de l'IA" },
+        { num: '10K+', label: 'Œuvres Analysées' },
+      ].map((stat, i) => (
+
+        <div key={i} className="stats-item">
+
+          <p className="shimmer-text"
+            style={{
+              fontSize: '2.6rem',
+              fontWeight: 600,
+              fontFamily: 'Cormorant Garamond, serif'
+            }}>
+            {stat.num}
+          </p>
+
+          <p style={{
+            fontSize: '0.75rem',
+            letterSpacing: '0.15em',
+            color: 'rgba(255,255,255,0.45)'
+          }}>
+            {stat.label}
+          </p>
+
         </div>
+
+      ))}
+
+    </div>
+
+  </div>
+</div>
 
         {/* CRAFTS SECTION */}
         <section id="artisanat" style={{ padding: '7rem 0', background: 'var(--sand)' }}>
@@ -360,7 +435,7 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
               {crafts.map((craft, index) => (
                 <motion.div
                   key={index}
@@ -398,7 +473,7 @@ export default function HomePage() {
         {/* ABOUT / HOW IT WORKS */}
         <section style={{ padding: '7rem 0', background: 'white' }} id="apropos">
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
+            <div style={{ display: 'grid',gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '6rem', alignItems: 'center' }}>
 
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
@@ -516,7 +591,7 @@ export default function HomePage() {
         {/* FOOTER */}
         <footer style={{ background: 'var(--ink)', color: 'white', padding: '5rem 0 2.5rem' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1.2rem' }}>
                   <div style={{ width: 34, height: 34, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2 }}>
