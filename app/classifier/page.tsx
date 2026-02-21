@@ -44,9 +44,7 @@ const craftIcons: Record<string, string> = {
 
 
 export default function ClassifierPage() {
-
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment')
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -72,38 +70,24 @@ export default function ClassifierPage() {
   }
 
   const startCamera = async () => {
-  try {
-
-    // stop ancien stream
-    if (videoRef.current?.srcObject) {
-      const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
-      tracks.forEach(track => track.stop())
-    }
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: facingMode },
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
-      },
-      audio: false
-    })
-
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: facingMode
+        }
+        })      
     setCameraOn(true)
-
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream
-      await videoRef.current.play()
+    setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          videoRef.current.onloadedmetadata = () => videoRef.current?.play()
+        }
+      }, 100)
+    } catch {
+      setError("Impossible d'accéder à la caméra")
     }
-
-  } catch (err) {
-
-    console.log(err)
-
-    setError("Impossible d'accéder à la caméra")
-
   }
-}
+
   const capturePhoto = () => {
     const video = videoRef.current
     const canvas = canvasRef.current
@@ -481,62 +465,10 @@ export default function ClassifierPage() {
                       </button>
                     </div>
                     <video ref={videoRef} autoPlay style={{ width: '100%', height: 'auto', borderRadius: 2, display: 'block' }} />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginTop: '1rem' }}>                      <button onClick={stopCamera} className="btn-ghost" style={{ padding: '0.85rem', borderRadius: 2 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '1rem' }}>                      <button onClick={stopCamera} className="btn-ghost" style={{ padding: '0.85rem', borderRadius: 2 }}>
                         Annuler
                       </button>
-
-                        <button
-  onClick={async () => {
-
-    stopCamera()
-
-    const newMode =
-      facingMode === "user"
-        ? "environment"
-        : "user"
-
-    setFacingMode(newMode)
-
-    try {
-
-      const stream =
-        await navigator.mediaDevices.getUserMedia({
-
-          video: {
-            facingMode: { ideal: newMode },
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
-
-          },
-          audio: false
-
-        })
-
-      if (videoRef.current) {
-
-        videoRef.current.srcObject = stream
-        await videoRef.current.play()
-
-      }
-
-      setCameraOn(true)
-
-    }
-    catch {
-
-      setError("Impossible d'accéder à la caméra")
-
-    }
-
-  }}
-
-  className="btn-ghost"
-  style={{ padding: '0.85rem', borderRadius: 2 }}
->
-🔄 Switch
-</button>
-
-                            <button onClick={capturePhoto} className="btn-primary" style={{ padding: '0.85rem', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                      <button onClick={capturePhoto} className="btn-primary" style={{ padding: '0.85rem', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                         <Camera size={15} />
                         Capturer
                       </button>
@@ -594,30 +526,9 @@ export default function ClassifierPage() {
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div className="gold-divider" style={{ flex: 1 }} />
-                    <span style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>ou</span>
-                    <div className="gold-divider" style={{ flex: 1 }} />
-                  </div>
+                  
 
-                  <div
-                    className="upload-zone"
-                    style={{ borderRadius: 4, padding: '1.6rem', display: 'flex', alignItems: 'center', gap: '1.2rem' }}
-                    onClick={startCamera}
-                  >
-                    <div style={{ width: 48, height: 48, borderRadius: 2, background: 'var(--sand)', border: '1px solid rgba(184,136,42,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Camera size={20} color="var(--terracotta)" />
-                    </div>
-                    <div>
-                      <p style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--ink)', marginBottom: 3, fontFamily: 'Jost, sans-serif' }}>
-                        Capturer une photo
-                      </p>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
-                        Utiliser votre caméra en direct
-                      </p>
-                    </div>
-                    <ArrowLeft size={15} color="var(--muted)" style={{ marginLeft: 'auto', transform: 'rotate(180deg)' }} />
-                  </div>
+                 
                 </motion.div>
               )}
 
