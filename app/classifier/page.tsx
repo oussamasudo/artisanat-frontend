@@ -42,7 +42,11 @@ const craftIcons: Record<string, string> = {
   zellige: '🟦'
 }
 
+
 export default function ClassifierPage() {
+
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment')
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -68,20 +72,38 @@ export default function ClassifierPage() {
   }
 
   const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-      setCameraOn(true)
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          videoRef.current.onloadedmetadata = () => videoRef.current?.play()
-        }
-      }, 100)
-    } catch {
-      setError("Impossible d'accéder à la caméra")
-    }
-  }
+  try {
 
+    // stop ancien stream
+    if (videoRef.current?.srcObject) {
+      const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
+      tracks.forEach(track => track.stop())
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: facingMode },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      },
+      audio: false
+    })
+
+    setCameraOn(true)
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream
+      await videoRef.current.play()
+    }
+
+  } catch (err) {
+
+    console.log(err)
+
+    setError("Impossible d'accéder à la caméra")
+
+  }
+}
   const capturePhoto = () => {
     const video = videoRef.current
     const canvas = canvasRef.current
@@ -459,11 +481,62 @@ export default function ClassifierPage() {
                       </button>
                     </div>
                     <video ref={videoRef} autoPlay style={{ width: '100%', height: 'auto', borderRadius: 2, display: 'block' }} />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '1rem' }}>
-                      <button onClick={stopCamera} className="btn-ghost" style={{ padding: '0.85rem', borderRadius: 2 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginTop: '1rem' }}>                      <button onClick={stopCamera} className="btn-ghost" style={{ padding: '0.85rem', borderRadius: 2 }}>
                         Annuler
                       </button>
-                      <button onClick={capturePhoto} className="btn-primary" style={{ padding: '0.85rem', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+
+                        <button
+  onClick={async () => {
+
+    stopCamera()
+
+    const newMode =
+      facingMode === "user"
+        ? "environment"
+        : "user"
+
+    setFacingMode(newMode)
+
+    try {
+
+      const stream =
+        await navigator.mediaDevices.getUserMedia({
+
+          video: {
+            facingMode: { ideal: newMode },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+
+          },
+          audio: false
+
+        })
+
+      if (videoRef.current) {
+
+        videoRef.current.srcObject = stream
+        await videoRef.current.play()
+
+      }
+
+      setCameraOn(true)
+
+    }
+    catch {
+
+      setError("Impossible d'accéder à la caméra")
+
+    }
+
+  }}
+
+  className="btn-ghost"
+  style={{ padding: '0.85rem', borderRadius: 2 }}
+>
+🔄 Switch
+</button>
+
+                            <button onClick={capturePhoto} className="btn-primary" style={{ padding: '0.85rem', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                         <Camera size={15} />
                         Capturer
                       </button>
