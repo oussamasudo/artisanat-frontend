@@ -204,6 +204,46 @@ export default function HomePage() {
 
 @media (max-width: 768px) {
 
+  /* cacher menu */
+  nav {
+    display: none;
+  }
+
+  /* rendre le header vertical */
+  header > div > div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  /* bouton classifier full width */
+  header .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* stats */
+  .stats-container {
+    flex-direction: column;
+  }
+
+  .stats-item {
+    border-right: none;
+    border-bottom: 1px solid rgba(184,136,42,0.2);
+    padding: 1.5rem 0;
+  }
+
+  /* sections padding */
+  section {
+    padding: 3rem 1rem !important;
+  }
+
+  /* titre */
+  h2 {
+    font-size: 2.2rem !important;
+  }
+
+}
 
   nav {
 
