@@ -1,14 +1,26 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Sparkles, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
+
+// ── Hook mobile ───────────────────────────────────────────────────────────────
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= breakpoint)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [breakpoint])
+  return isMobile
+}
 
 export default function HomePage() {
   const router = useRouter()
+  const isMobile = useIsMobile()
   const timelineRef = useRef(null)
   const isTimelineInView = useInView(timelineRef, { once: true, margin: '-100px' })
   const [activeTestimonial, setActiveTestimonial] = useState(0)
@@ -267,10 +279,11 @@ export default function HomePage() {
 
         {/* HEADER */}
         <header style={{ background: 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50 }}>
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0' }}>
+              {/* Logo */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2 }}>
+                <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
                   <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
                 </div>
                 <div>
@@ -278,14 +291,31 @@ export default function HomePage() {
                   <p style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Artisanat Marocain</p>
                 </div>
               </div>
-              <nav style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-                <a href="#" className="nav-link">Accueil</a>
-                <a href="#artisanat" className="nav-link">Artisanat</a>
-                <a href="#timeline" className="nav-link">Histoire</a>
-                <a href="#apropos" className="nav-link">À propos</a>
-              </nav>
-              <button className="btn-primary" onClick={() => router.push('/classifier')} style={{ padding: '0.85rem 2rem', borderRadius: 2, display: 'flex', alignItems: 'center', gap: 8 }}>
-                Classifier une Œuvre <ArrowRight size={15} />
+
+              {/* Nav — desktop only */}
+              {!isMobile && (
+                <nav style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
+                  <a href="#" className="nav-link">Accueil</a>
+                  <a href="#artisanat" className="nav-link">Artisanat</a>
+                  <a href="#timeline" className="nav-link">Histoire</a>
+                  <a href="#apropos" className="nav-link">À propos</a>
+                </nav>
+              )}
+
+              {/* CTA button */}
+              <button
+                className="btn-primary"
+                onClick={() => router.push('/classifier')}
+                style={{
+                  padding: isMobile ? '0.75rem 1rem' : '0.85rem 2rem',
+                  borderRadius: 2,
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  fontSize: isMobile ? '0.72rem' : '0.85rem',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
+                <ArrowRight size={14} />
               </button>
             </div>
           </div>
@@ -397,79 +427,91 @@ export default function HomePage() {
 
             {/* Timeline container */}
             <div style={{ position: 'relative' }}>
-              {/* Central vertical line */}
-              <div className="timeline-center-line" style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, transform: 'translateX(-50%)', overflow: 'hidden' }}>
-                <motion.div
-                  initial={{ scaleY: 0 }}
-                  animate={isTimelineInView ? { scaleY: 1 } : { scaleY: 0 }}
-                  transition={{ duration: 2, ease: 'easeInOut' }}
-                  style={{ height: '100%', background: 'linear-gradient(to bottom, transparent, var(--gold), var(--terracotta), var(--gold), transparent)', transformOrigin: 'top' }}
-                />
-              </div>
 
-              {/* Timeline items */}
-              <div className="timeline-grid" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {timeline.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    className="timeline-row"
-                    initial={{ opacity: 0, x: item.side === 'left' ? -50 : 50 }}
-                    animate={isTimelineInView ? { opacity: 1, x: 0 } : { opacity: 0, x: item.side === 'left' ? -50 : 50 }}
-                    transition={{ duration: 0.7, delay: index * 0.2 }}
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 60px 1fr',
-                      alignItems: 'center',
-                      minHeight: 120,
-                    }}
-                  >
-                    {/* Left content */}
-                    <div
-                      className="timeline-cell-left"
-                      style={{
-                        padding: '1.5rem 2.5rem 1.5rem 0',
-                        textAlign: 'right',
-                        visibility: item.side === 'left' ? 'visible' : 'hidden',
-                      }}
+              {isMobile ? (
+                /* ── MOBILE: vertical list with left border ── */
+                <div style={{
+                  paddingLeft: '1.8rem',
+                  borderLeft: '2px solid rgba(184,136,42,0.35)',
+                  display: 'flex', flexDirection: 'column', gap: '1rem',
+                }}>
+                  {timeline.map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={isTimelineInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                      transition={{ duration: 0.5, delay: index * 0.15 }}
+                      style={{ position: 'relative' }}
                     >
-                      {item.side === 'left' && <TimelineCard item={item} />}
-                    </div>
-
-                    {/* Center dot */}
-                    <div className="timeline-cell-dot" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 2 }}>
-                      <div
-                        className={item.highlight ? 'timeline-dot-active' : ''}
-                        style={{
-                          width: item.highlight ? 48 : 38,
-                          height: item.highlight ? 48 : 38,
-                          borderRadius: item.highlight ? 4 : '50%',
-                          background: item.highlight ? 'var(--terracotta)' : 'white',
-                          border: item.highlight ? 'none' : '2px solid var(--gold)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: item.highlight ? '0.9rem' : '1.3rem',
-                          boxShadow: item.highlight ? '0 8px 24px rgba(196,98,45,0.4)' : '0 2px 12px rgba(184,136,42,0.2)',
-                          color: item.highlight ? 'white' : undefined,
-                          transform: item.highlight ? 'rotate(45deg)' : undefined,
-                        }}
+                      {/* Dot on the left line */}
+                      <div style={{
+                        position: 'absolute',
+                        left: '-2.05rem',
+                        top: '1.3rem',
+                        width: 12, height: 12,
+                        borderRadius: item.highlight ? 2 : '50%',
+                        background: item.highlight ? 'var(--terracotta)' : 'var(--gold)',
+                        border: '2px solid white',
+                        boxShadow: '0 0 0 3px rgba(184,136,42,0.2)',
+                        transform: item.highlight ? 'rotate(45deg)' : undefined,
+                      }} />
+                      <TimelineCard item={item} />
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                /* ── DESKTOP: alternating left/right ── */
+                <>
+                  {/* Central vertical line */}
+                  <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, transform: 'translateX(-50%)', overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ scaleY: 0 }}
+                      animate={isTimelineInView ? { scaleY: 1 } : { scaleY: 0 }}
+                      transition={{ duration: 2, ease: 'easeInOut' }}
+                      style={{ height: '100%', background: 'linear-gradient(to bottom, transparent, var(--gold), var(--terracotta), var(--gold), transparent)', transformOrigin: 'top' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {timeline.map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: item.side === 'left' ? -50 : 50 }}
+                        animate={isTimelineInView ? { opacity: 1, x: 0 } : { opacity: 0, x: item.side === 'left' ? -50 : 50 }}
+                        transition={{ duration: 0.7, delay: index * 0.2 }}
+                        style={{ display: 'grid', gridTemplateColumns: '1fr 60px 1fr', alignItems: 'center', minHeight: 120 }}
                       >
-                        <span style={{ transform: item.highlight ? 'rotate(-45deg)' : undefined }}>{item.icon}</span>
-                      </div>
-                    </div>
-
-                    {/* Right content */}
-                    <div
-                      className="timeline-cell-right"
-                      style={{
-                        padding: '1.5rem 0 1.5rem 2.5rem',
-                        textAlign: 'left',
-                        visibility: item.side === 'right' ? 'visible' : 'hidden',
-                      }}
-                    >
-                      {item.side === 'right' && <TimelineCard item={item} />}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                        {/* Left cell */}
+                        <div style={{ padding: '1.5rem 2.5rem 1.5rem 0', textAlign: 'right', visibility: item.side === 'left' ? 'visible' : 'hidden' }}>
+                          {item.side === 'left' && <TimelineCard item={item} />}
+                        </div>
+                        {/* Center dot */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 2 }}>
+                          <div
+                            className={item.highlight ? 'timeline-dot-active' : ''}
+                            style={{
+                              width: item.highlight ? 48 : 38, height: item.highlight ? 48 : 38,
+                              borderRadius: item.highlight ? 4 : '50%',
+                              background: item.highlight ? 'var(--terracotta)' : 'white',
+                              border: item.highlight ? 'none' : '2px solid var(--gold)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: item.highlight ? '0.9rem' : '1.3rem',
+                              boxShadow: item.highlight ? '0 8px 24px rgba(196,98,45,0.4)' : '0 2px 12px rgba(184,136,42,0.2)',
+                              color: item.highlight ? 'white' : undefined,
+                              transform: item.highlight ? 'rotate(45deg)' : undefined,
+                            }}
+                          >
+                            <span style={{ transform: item.highlight ? 'rotate(-45deg)' : undefined }}>{item.icon}</span>
+                          </div>
+                        </div>
+                        {/* Right cell */}
+                        <div style={{ padding: '1.5rem 0 1.5rem 2.5rem', textAlign: 'left', visibility: item.side === 'right' ? 'visible' : 'hidden' }}>
+                          {item.side === 'right' && <TimelineCard item={item} />}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>
