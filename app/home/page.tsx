@@ -271,11 +271,13 @@ export default function HomePage() {
       <div style={{ minHeight: '100vh', background: 'var(--cream)' }}>
 
         {/* TOP BAR */}
-        <div style={{ background: 'var(--ink)', padding: '9px 0', textAlign: 'center' }}>
-          <p style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
-            ✦ Préservation du patrimoine artisanal marocain par l'intelligence artificielle ✦
-          </p>
-        </div>
+        {!isMobile && (
+          <div style={{ background: 'var(--ink)', padding: '9px 0', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
+              ✦ Préservation du patrimoine artisanal marocain par l'intelligence artificielle ✦
+            </p>
+          </div>
+        )}
 
         {/* HEADER */}
         <header style={{ background: 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50 }}>
