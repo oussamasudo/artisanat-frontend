@@ -196,6 +196,7 @@ export default function HomePage() {
         .testi-nav-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: rgba(196,98,45,0.04); }
 
         @media (max-width: 768px) {
+          /* ── Général ── */
           nav { display: none; }
           header > div > div { flex-direction: column; align-items: flex-start; gap: 1rem; }
           header .btn-primary { width: 100%; justify-content: center; }
@@ -203,8 +204,55 @@ export default function HomePage() {
           .stats-item { border-right: none; border-bottom: 1px solid rgba(184,136,42,0.2); padding: 1.5rem 0; }
           section { padding: 3rem 1rem !important; }
           h2 { font-size: 2.2rem !important; }
-          .timeline-line { display: none; }
-          .timeline-item-left, .timeline-item-right { grid-column: 1 !important; text-align: left !important; padding-right: 0 !important; padding-left: 3rem !important; }
+
+          /* ── Timeline : colonne verticale avec ligne à gauche ── */
+          .timeline-center-line { display: none !important; }
+
+          .timeline-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            padding-left: 1.5rem !important;
+            border-left: 2px solid rgba(184,136,42,0.4) !important;
+            gap: 0 !important;
+          }
+
+          .timeline-row {
+            display: block !important;
+            position: relative !important;
+            min-height: unset !important;
+            margin-bottom: 1rem !important;
+          }
+
+          .timeline-row::before {
+            content: '';
+            position: absolute;
+            left: -2.1rem;
+            top: 1.4rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2px solid white;
+            box-shadow: 0 0 0 3px rgba(184,136,42,0.2);
+          }
+
+          .timeline-cell-dot { display: none !important; }
+
+          .timeline-cell-left,
+          .timeline-cell-right {
+            display: block !important;
+            visibility: visible !important;
+            padding: 0 0 0 0.5rem !important;
+            text-align: left !important;
+          }
+
+          /* ── Témoignages ── */
+          .testi-card { padding: 1.6rem 1.2rem !important; }
+          .testi-quote-icon { display: none !important; }
+          .testi-text { font-size: 1rem !important; line-height: 1.7 !important; margin-bottom: 1.4rem !important; }
+          .testi-author { flex-wrap: wrap !important; gap: 0.8rem !important; }
+          .testi-craft-badge { margin-left: 0 !important; }
+          .testi-nav { flex-direction: column-reverse !important; align-items: center !important; gap: 1rem !important; }
         }
       `}</style>
 
@@ -350,7 +398,7 @@ export default function HomePage() {
             {/* Timeline container */}
             <div style={{ position: 'relative' }}>
               {/* Central vertical line */}
-              <div className="timeline-line" style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, transform: 'translateX(-50%)', overflow: 'hidden' }}>
+              <div className="timeline-center-line" style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, transform: 'translateX(-50%)', overflow: 'hidden' }}>
                 <motion.div
                   initial={{ scaleY: 0 }}
                   animate={isTimelineInView ? { scaleY: 1 } : { scaleY: 0 }}
@@ -360,10 +408,11 @@ export default function HomePage() {
               </div>
 
               {/* Timeline items */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+              <div className="timeline-grid" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
                 {timeline.map((item, index) => (
                   <motion.div
                     key={index}
+                    className="timeline-row"
                     initial={{ opacity: 0, x: item.side === 'left' ? -50 : 50 }}
                     animate={isTimelineInView ? { opacity: 1, x: 0 } : { opacity: 0, x: item.side === 'left' ? -50 : 50 }}
                     transition={{ duration: 0.7, delay: index * 0.2 }}
@@ -371,23 +420,23 @@ export default function HomePage() {
                       display: 'grid',
                       gridTemplateColumns: '1fr 60px 1fr',
                       alignItems: 'center',
-                      marginBottom: index < timeline.length - 1 ? '0' : '0',
                       minHeight: 120,
                     }}
                   >
                     {/* Left content */}
-                    <div style={{
-                      padding: '1.5rem 2.5rem 1.5rem 0',
-                      textAlign: 'right',
-                      visibility: item.side === 'left' ? 'visible' : 'hidden',
-                    }}>
-                      {item.side === 'left' && (
-                        <TimelineCard item={item} />
-                      )}
+                    <div
+                      className="timeline-cell-left"
+                      style={{
+                        padding: '1.5rem 2.5rem 1.5rem 0',
+                        textAlign: 'right',
+                        visibility: item.side === 'left' ? 'visible' : 'hidden',
+                      }}
+                    >
+                      {item.side === 'left' && <TimelineCard item={item} />}
                     </div>
 
                     {/* Center dot */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 2 }}>
+                    <div className="timeline-cell-dot" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 2 }}>
                       <div
                         className={item.highlight ? 'timeline-dot-active' : ''}
                         style={{
@@ -403,21 +452,20 @@ export default function HomePage() {
                           transform: item.highlight ? 'rotate(45deg)' : undefined,
                         }}
                       >
-                        <span style={{ transform: item.highlight ? 'rotate(-45deg)' : undefined }}>
-                          {item.icon}
-                        </span>
+                        <span style={{ transform: item.highlight ? 'rotate(-45deg)' : undefined }}>{item.icon}</span>
                       </div>
                     </div>
 
                     {/* Right content */}
-                    <div style={{
-                      padding: '1.5rem 0 1.5rem 2.5rem',
-                      textAlign: 'left',
-                      visibility: item.side === 'right' ? 'visible' : 'hidden',
-                    }}>
-                      {item.side === 'right' && (
-                        <TimelineCard item={item} />
-                      )}
+                    <div
+                      className="timeline-cell-right"
+                      style={{
+                        padding: '1.5rem 0 1.5rem 2.5rem',
+                        textAlign: 'left',
+                        visibility: item.side === 'right' ? 'visible' : 'hidden',
+                      }}
+                    >
+                      {item.side === 'right' && <TimelineCard item={item} />}
                     </div>
                   </motion.div>
                 ))}
@@ -502,6 +550,7 @@ export default function HomePage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5 }}
+                  className="testi-card"
                   style={{
                     background: 'rgba(255,255,255,0.04)',
                     border: '1px solid rgba(184,136,42,0.2)',
@@ -512,7 +561,7 @@ export default function HomePage() {
                   }}
                 >
                   {/* Quote mark */}
-                  <div style={{ position: 'absolute', top: '2rem', right: '2.5rem', opacity: 0.12 }}>
+                  <div className="testi-quote-icon" style={{ position: 'absolute', top: '2rem', right: '2.5rem', opacity: 0.12 }}>
                     <Quote size={64} color="var(--gold)" />
                   </div>
 
@@ -524,27 +573,30 @@ export default function HomePage() {
                   </div>
 
                   {/* Text */}
-                  <p style={{
-                    fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
-                    color: 'rgba(255,255,255,0.88)',
-                    lineHeight: 1.9,
-                    fontFamily: 'Cormorant Garamond, serif',
-                    fontStyle: 'italic',
-                    fontWeight: 300,
-                    marginBottom: '2.5rem',
-                    position: 'relative', zIndex: 1,
-                  }}>
+                  <p
+                    className="testi-text"
+                    style={{
+                      fontSize: 'clamp(1rem, 2vw, 1.35rem)',
+                      color: 'rgba(255,255,255,0.88)',
+                      lineHeight: 1.85,
+                      fontFamily: 'Cormorant Garamond, serif',
+                      fontStyle: 'italic',
+                      fontWeight: 300,
+                      marginBottom: '2.5rem',
+                      position: 'relative', zIndex: 1,
+                    }}
+                  >
                     "{testimonials[activeTestimonial].text}"
                   </p>
 
                   {/* Author */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
+                  <div className="testi-author" style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
                     <div style={{
-                      width: 52, height: 52,
+                      width: 48, height: 48,
                       borderRadius: '50%',
                       background: 'linear-gradient(135deg, var(--terracotta), var(--terracotta-dark))',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1.2rem', fontWeight: 600,
+                      fontSize: '1.1rem', fontWeight: 600,
                       color: 'white', fontFamily: 'Cormorant Garamond, serif',
                       border: '2px solid rgba(212,169,74,0.3)',
                       flexShrink: 0,
@@ -552,18 +604,19 @@ export default function HomePage() {
                       {testimonials[activeTestimonial].avatar}
                     </div>
                     <div>
-                      <p style={{ fontSize: '1rem', fontWeight: 500, color: 'white', fontFamily: 'Jost, sans-serif', marginBottom: 3 }}>
+                      <p style={{ fontSize: '0.95rem', fontWeight: 500, color: 'white', fontFamily: 'Jost, sans-serif', marginBottom: 3 }}>
                         {testimonials[activeTestimonial].name}
                       </p>
-                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.05em', fontFamily: 'Jost' }}>
+                      <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.05em', fontFamily: 'Jost' }}>
                         {testimonials[activeTestimonial].role}
                       </p>
                     </div>
-                    <div style={{ marginLeft: 'auto' }}>
+                    <div className="testi-craft-badge" style={{ marginLeft: 'auto' }}>
                       <span style={{
-                        fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase',
+                        fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase',
                         color: 'var(--gold)', border: '1px solid rgba(184,136,42,0.35)',
                         padding: '4px 10px', borderRadius: 2, fontFamily: 'Jost',
+                        whiteSpace: 'nowrap',
                       }}>
                         {testimonials[activeTestimonial].craft}
                       </span>
@@ -573,7 +626,7 @@ export default function HomePage() {
               </AnimatePresence>
 
               {/* Navigation */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem' }}>
+              <div className="testi-nav" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem' }}>
                 {/* Dots */}
                 <div style={{ display: 'flex', gap: 8 }}>
                   {testimonials.map((_, i) => (
