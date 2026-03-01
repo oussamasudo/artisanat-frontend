@@ -1135,7 +1135,7 @@ export default function ClassifierPage() {
             <p className="section-label" style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
               ✦ Artisanats Reconnus ✦
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
               {Object.keys(craftNames).map((key, index) => {
                 const isFlipped = flipped === key
                 return (
@@ -1143,38 +1143,79 @@ export default function ClassifierPage() {
                     key={key}
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.2 }}
+                    transition={{ delay: index * 0.15 }}
                     onClick={() => setFlipped(isFlipped ? null : key)}
                     style={{
-                      width: '100%', height: '260px',
+                      width: '100%',
+                      minHeight: isFlipped ? 'auto' : '220px',
                       background: 'white',
-                      border: '1px solid rgba(184,136,42,0.15)',
+                      border: `1px solid ${isFlipped ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.15)'}`,
                       borderRadius: 12,
                       textAlign: 'center',
-                      boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+                      boxShadow: isFlipped ? '0 6px 24px rgba(184,136,42,0.12)' : '0 2px 12px rgba(0,0,0,0.05)',
                       cursor: 'pointer',
-                      perspective: 1000,
-                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'border-color 0.3s, box-shadow 0.3s',
                     }}
                   >
-                    <motion.div
-                      style={{ position: 'relative', width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
-                      animate={{ rotateY: isFlipped ? 180 : 0 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      {/* FRONT */}
-                      <div style={{ position: 'absolute', inset: 0, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', backfaceVisibility: 'hidden', padding: '12px' }}>
-                        <div style={{ fontSize: '2.8rem', marginBottom: '10px' }}>{craftIcons[key]}</div>
-                        <p style={{ fontSize: '1.3rem', fontWeight: 600, fontFamily: 'Cormorant Garamond, serif', margin: 0 }}>{craftNames[key]}</p>
-                        <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 6, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'Jost' }}>Cliquez pour en savoir plus</p>
-                      </div>
-                      {/* BACK */}
-                      <div style={{ position: 'absolute', inset: 0, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', padding: '20px', gap: '10px', background: 'white', borderRadius: 12 }}>
-                        <p style={{ fontWeight: 600, margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: '1.1rem' }}>{craftNames[key]}</p>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--muted)', margin: 0, lineHeight: 1.6 }}>{craftHistory[key]}</p>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--gold)', margin: 0 }}>📍 {craftRegions[key]}</p>
-                      </div>
-                    </motion.div>
+                    <AnimatePresence mode="wait">
+                      {!isFlipped ? (
+                        /* ── FRONT ── */
+                        <motion.div
+                          key="front"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          style={{
+                            padding: '1.8rem 1rem',
+                            display: 'flex', flexDirection: 'column',
+                            alignItems: 'center', justifyContent: 'center',
+                            minHeight: '220px',
+                          }}
+                        >
+                          <div style={{ fontSize: '2.6rem', marginBottom: '10px' }}>{craftIcons[key]}</div>
+                          <p style={{ fontSize: '1.15rem', fontWeight: 600, fontFamily: 'Cormorant Garamond, serif', margin: 0, lineHeight: 1.2 }}>
+                            {craftNames[key]}
+                          </p>
+                          <p style={{ fontSize: '0.65rem', color: 'var(--muted)', marginTop: 8, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'Jost' }}>
+                            Touchez pour en savoir plus
+                          </p>
+                          <div style={{ marginTop: 10, width: 24, height: 1, background: 'rgba(184,136,42,0.3)' }} />
+                        </motion.div>
+                      ) : (
+                        /* ── BACK ── */
+                        <motion.div
+                          key="back"
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.25 }}
+                          style={{
+                            padding: '1.4rem 1rem',
+                            display: 'flex', flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '0.6rem',
+                            background: 'linear-gradient(160deg, white 0%, rgba(245,237,216,0.4) 100%)',
+                          }}
+                        >
+                          <div style={{ fontSize: '1.4rem' }}>{craftIcons[key]}</div>
+                          <p style={{ fontWeight: 600, margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: '1rem', color: 'var(--ink)' }}>
+                            {craftNames[key]}
+                          </p>
+                          <div style={{ width: 30, height: 1, background: 'rgba(184,136,42,0.35)' }} />
+                          <p style={{ fontSize: '0.82rem', color: 'var(--muted)', margin: 0, lineHeight: 1.65, textAlign: 'center' }}>
+                            {craftHistory[key]}
+                          </p>
+                          <p style={{ fontSize: '0.78rem', color: 'var(--gold)', margin: 0, fontWeight: 500 }}>
+                            📍 {craftRegions[key]}
+                          </p>
+                          <p style={{ fontSize: '0.62rem', color: 'var(--muted)', letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'Jost', marginTop: 4, opacity: 0.6 }}>
+                            Touchez pour fermer
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
                 )
               })}
