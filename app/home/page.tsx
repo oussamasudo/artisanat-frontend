@@ -22,6 +22,7 @@ function useIsMobile(breakpoint = 768) {
 function CustomCursor() {
   const [pos, setPos] = useState({ x: -100, y: -100 })
   const [isHovering, setIsHovering] = useState(false)
+  const [isClicking, setIsClicking] = useState(false)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -31,28 +32,42 @@ function CustomCursor() {
       setIsHovering(!!(el.closest('button') || el.closest('a') || el.closest('.craft-card')))
     }
     const leave = () => setVisible(false)
+    const down = () => setIsClicking(true)
+    const up = () => setIsClicking(false)
+
     window.addEventListener('mousemove', move)
     window.addEventListener('mouseover', over)
+    window.addEventListener('mousedown', down)
+    window.addEventListener('mouseup', up)
     document.addEventListener('mouseleave', leave)
     return () => {
       window.removeEventListener('mousemove', move)
       window.removeEventListener('mouseover', over)
+      window.removeEventListener('mousedown', down)
+      window.removeEventListener('mouseup', up)
       document.removeEventListener('mouseleave', leave)
     }
   }, [])
 
+  if (!isHovering && !isClicking) return null
+
   return (
     <>
       <motion.div
-        animate={{ x: pos.x - 10, y: pos.y - 10, scale: isHovering ? 1.8 : 1, opacity: visible ? 1 : 0 }}
+        animate={{
+          x: pos.x - 10,
+          y: pos.y - 10,
+          scale: isClicking ? 2 : 1.8,
+          opacity: visible ? 1 : 0,
+        }}
         transition={{ type: 'spring', stiffness: 500, damping: 35, mass: 0.3 }}
         style={{
           position: 'fixed', top: 0, left: 0, zIndex: 99999,
           width: 20, height: 20, pointerEvents: 'none',
           transform: 'rotate(45deg)',
-          background: isHovering ? 'rgba(196,98,45,0.15)' : 'transparent',
-          border: `2px solid ${isHovering ? 'var(--terracotta)' : 'var(--gold)'}`,
-          transition: 'border-color 0.2s, background 0.2s',
+          background: isClicking ? 'rgba(196,98,45,0.35)' : 'rgba(196,98,45,0.15)',
+          border: '2px solid var(--terracotta)',
+          transition: 'background 0.15s',
         }}
       />
       <motion.div
@@ -216,8 +231,8 @@ export default function HomePage() {
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; font-size: 18px; }
-        body { background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
-        a, button { cursor: none; }
+        body { background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; overflow-x: hidden; cursor: auto; }
+        a, button { cursor: pointer; }
 
         .zellige-bg {
           background-color: var(--terracotta-dark);
