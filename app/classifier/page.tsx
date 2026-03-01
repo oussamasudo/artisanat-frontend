@@ -27,13 +27,13 @@ const craftRegions: Record<string, string> = {
   zellige: 'Marrakech & Fès'
 }
 
-// Coordinates on the SVG map (approximate positions within Morocco SVG viewBox)
-const craftMapCoords: Record<string, { x: number; y: number; label: string }> = {
-  babouche: { x: 310, y: 155, label: 'Fès' },
-  bijoux:   { x: 270, y: 230, label: 'Atlas & Souss' },
-  poterie:  { x: 185, y: 280, label: 'Safi' },
-  tapis:    { x: 310, y: 295, label: 'Taznakht' },
-  zellige:  { x: 230, y: 210, label: 'Marrakech & Fès' },
+// ── REMPLACÉ : vraies coordonnées lat/lng ──────────────────────────────────
+const craftMapCoords: Record<string, { lat: number; lng: number; label: string }> = {
+  babouche: { lat: 34.0181, lng: -5.0078,  label: 'Fès' },
+  bijoux:   { lat: 30.9,    lng: -7.5,     label: 'Atlas & Souss' },
+  poterie:  { lat: 32.2994, lng: -9.2372,  label: 'Safi' },
+  tapis:    { lat: 30.5833, lng: -7.2,     label: 'Taznakht' },
+  zellige:  { lat: 31.6295, lng: -7.9811,  label: 'Marrakech' },
 }
 
 const craftHeritage: Record<string, string> = {
@@ -89,112 +89,159 @@ const craftGallery: Record<string, string[]> = {
   ],
 }
 
-// ─── Morocco SVG Map ────────────────────────────────────────────────────────
+// ─── Morocco Map — Leaflet (vraie carte) ─────────────────────────────────────
 function MoroccoMap({ activeCraft }: { activeCraft: string | null }) {
-  const coords = activeCraft ? craftMapCoords[activeCraft] : null
+  const mapRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<any>(null)
+  const markerRef = useRef<any>(null)
+
+  // Inject Leaflet CSS & pulse animation once
+  useEffect(() => {
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link')
+      link.id = 'leaflet-css'
+      link.rel = 'stylesheet'
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+      document.head.appendChild(link)
+    }
+    if (!document.getElementById('craft-map-styles')) {
+      const style = document.createElement('style')
+      style.id = 'craft-map-styles'
+      style.textContent = `
+        @keyframes craftPulse {
+          0%   { transform: scale(0.8); opacity: 0.9; }
+          70%  { transform: scale(2.6); opacity: 0;   }
+          100% { transform: scale(0.8); opacity: 0;   }
+        }
+        .craft-tooltip-label {
+          background: white !important;
+          border: 1px solid rgba(184,136,42,0.35) !important;
+          border-radius: 3px !important;
+          box-shadow: 0 4px 14px rgba(196,98,45,0.18) !important;
+          padding: 4px 10px !important;
+          font-family: 'Jost', sans-serif !important;
+          font-size: 0.72rem !important;
+          letter-spacing: 0.14em !important;
+          text-transform: uppercase !important;
+          color: #1A1208 !important;
+          white-space: nowrap !important;
+        }
+        .craft-tooltip-label::before { display: none !important; }
+        .leaflet-control-zoom {
+          border: 1px solid rgba(184,136,42,0.25) !important;
+          border-radius: 3px !important;
+        }
+        .leaflet-control-zoom a {
+          color: #8C7355 !important;
+          font-family: 'Jost', sans-serif !important;
+        }
+        .leaflet-control-zoom a:hover {
+          background: rgba(196,98,45,0.08) !important;
+          color: #C4622D !important;
+        }
+        .leaflet-tile-pane {
+          filter: sepia(0.18) saturate(0.9) brightness(1.04);
+        }
+        .leaflet-control-attribution { display: none !important; }
+      `
+      document.head.appendChild(style)
+    }
+  }, [])
+
+  // Init map + update marker when activeCraft changes
+  useEffect(() => {
+    if (typeof window === 'undefined' || !mapRef.current) return
+
+    import('leaflet').then((L) => {
+      // Fix webpack broken icon paths
+      delete (L.Icon.Default.prototype as any)._getIconUrl
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      })
+
+      // Initialize map only once
+      if (!mapInstanceRef.current) {
+        const map = L.map(mapRef.current!, {
+          center: [31.7917, -7.0926],
+          zoom: 5,
+          zoomControl: true,
+          scrollWheelZoom: false,
+          dragging: true,
+          attributionControl: false,
+        })
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          maxZoom: 19,
+        }).addTo(map)
+
+        mapInstanceRef.current = map
+      }
+
+      const map = mapInstanceRef.current
+
+      // Remove previous marker
+      if (markerRef.current) {
+        map.removeLayer(markerRef.current)
+        markerRef.current = null
+      }
+
+      if (activeCraft && craftMapCoords[activeCraft]) {
+        const { lat, lng, label } = craftMapCoords[activeCraft]
+
+        // Custom terracotta pulsing marker
+        const customIcon = L.divIcon({
+          className: '',
+          html: `
+            <div style="position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;">
+              <div style="position:absolute;width:44px;height:44px;border-radius:50%;background:rgba(196,98,45,0.15);animation:craftPulse 2s ease-out infinite;"></div>
+              <div style="position:absolute;width:30px;height:30px;border-radius:50%;background:rgba(196,98,45,0.22);animation:craftPulse 2s ease-out infinite 0.45s;"></div>
+              <div style="position:relative;width:14px;height:14px;border-radius:50%;background:#C4622D;border:2.5px solid white;box-shadow:0 2px 10px rgba(196,98,45,0.65);z-index:10;"></div>
+            </div>
+          `,
+          iconSize: [44, 44],
+          iconAnchor: [22, 22],
+        })
+
+        const marker = L.marker([lat, lng], { icon: customIcon })
+          .addTo(map)
+          .bindTooltip(`📍 ${label}`, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -26],
+            className: 'craft-tooltip-label',
+          })
+
+        markerRef.current = marker
+        map.flyTo([lat, lng], 7, { duration: 1.4, easeLinearity: 0.4 })
+      } else {
+        map.flyTo([31.7917, -7.0926], 5, { duration: 1.2 })
+      }
+    })
+  }, [activeCraft])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove()
+        mapInstanceRef.current = null
+      }
+    }
+  }, [])
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
-      <svg
-        viewBox="0 0 500 420"
-        style={{ width: '100%', height: 'auto', display: 'block' }}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Morocco simplified outline */}
-        <path
-          d="
-            M 155 30
-            L 200 25 L 260 20 L 330 22 L 390 35
-            L 420 55 L 435 80 L 440 110 L 435 140
-            L 425 165 L 415 185 L 410 210
-            L 400 240 L 390 265 L 375 285
-            L 355 310 L 340 330 L 330 355
-            L 320 375 L 310 395 L 300 410
-            L 280 415 L 265 410
-            L 245 395 L 235 375
-            L 220 350 L 205 325
-            L 185 300 L 165 280
-            L 140 260 L 115 245
-            L 90 235 L 70 225
-            L 55 210 L 45 195
-            L 38 175 L 35 155
-            L 40 130 L 50 110
-            L 65 90 L 85 72
-            L 110 55 L 135 40
-            Z
-          "
-          fill="rgba(196,98,45,0.08)"
-          stroke="rgba(184,136,42,0.4)"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-
-        {/* Subtle grid lines */}
-        {[100, 150, 200, 250, 300, 350].map(y => (
-          <line key={y} x1="30" y1={y} x2="450" y2={y} stroke="rgba(184,136,42,0.06)" strokeWidth="0.5" />
-        ))}
-        {[100, 150, 200, 250, 300, 350, 400].map(x => (
-          <line key={x} x1={x} y1="20" x2={x} y2="420" stroke="rgba(184,136,42,0.06)" strokeWidth="0.5" />
-        ))}
-
-        {/* All craft dots (inactive) */}
-        {Object.entries(craftMapCoords).map(([key, pos]) => {
-          const isActive = activeCraft === key
-          return (
-            <g key={key}>
-              {isActive && (
-                <>
-                  <circle cx={pos.x} cy={pos.y} r="18" fill="rgba(196,98,45,0.12)" />
-                  <circle cx={pos.x} cy={pos.y} r="12" fill="rgba(196,98,45,0.2)" />
-                </>
-              )}
-              <circle
-                cx={pos.x}
-                cy={pos.y}
-                r={isActive ? 6 : 4}
-                fill={isActive ? 'var(--terracotta)' : 'rgba(184,136,42,0.35)'}
-                stroke={isActive ? 'white' : 'transparent'}
-                strokeWidth="1.5"
-              />
-              {isActive && (
-                <>
-                  <line
-                    x1={pos.x} y1={pos.y - 6}
-                    x2={pos.x} y2={pos.y - 28}
-                    stroke="var(--terracotta)" strokeWidth="1.5"
-                  />
-                  <rect
-                    x={pos.x - 38} y={pos.y - 46}
-                    width="76" height="18"
-                    rx="3"
-                    fill="var(--terracotta)"
-                  />
-                  <text
-                    x={pos.x} y={pos.y - 33}
-                    textAnchor="middle"
-                    fill="white"
-                    fontSize="9"
-                    fontFamily="Jost, sans-serif"
-                    fontWeight="500"
-                    letterSpacing="0.08em"
-                  >
-                    {pos.label.toUpperCase()}
-                  </text>
-                </>
-              )}
-            </g>
-          )
-        })}
-
-        {/* Compass rose */}
-        <g transform="translate(450, 50)">
-          <circle cx="0" cy="0" r="12" fill="white" stroke="rgba(184,136,42,0.3)" strokeWidth="1" />
-          <text x="0" y="-15" textAnchor="middle" fontSize="7" fill="var(--muted)" fontFamily="Jost" fontWeight="500">N</text>
-          <polygon points="0,-9 2,0 0,2 -2,0" fill="var(--terracotta)" />
-          <polygon points="0,9 2,0 0,-2 -2,0" fill="rgba(184,136,42,0.3)" />
-        </g>
-      </svg>
-    </div>
+    <div
+      ref={mapRef}
+      style={{
+        width: '100%',
+        height: '280px',
+        borderRadius: 4,
+        overflow: 'hidden',
+        border: '1px solid rgba(184,136,42,0.2)',
+      }}
+    />
   )
 }
 
@@ -280,7 +327,6 @@ function CraftGallery({ onImageSelect }: { onImageSelect: (url: string) => void 
         marginTop: '1rem',
       }}
     >
-      {/* Gallery header */}
       <div style={{
         padding: '1rem 1.4rem',
         borderBottom: '1px solid var(--sand-deep)',
@@ -295,7 +341,6 @@ function CraftGallery({ onImageSelect }: { onImageSelect: (url: string) => void 
         </span>
       </div>
 
-      {/* Tabs */}
       <div style={{
         display: 'flex', overflowX: 'auto', borderBottom: '1px solid var(--sand-deep)',
         scrollbarWidth: 'none',
@@ -324,7 +369,6 @@ function CraftGallery({ onImageSelect }: { onImageSelect: (url: string) => void 
         ))}
       </div>
 
-      {/* Images */}
       <div style={{ padding: '1rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem' }}>
         {craftGallery[activeTab].map((url, i) => (
           <motion.div
@@ -435,6 +479,130 @@ function ClassifierCursor() {
   )
 }
 
+// ─── Feedback Form ────────────────────────────────────────────────────────────
+function FeedbackForm() {
+  const [message, setMessage] = useState('')
+  const [email, setEmail] = useState('')
+  const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+
+  const handleSubmit = async () => {
+    if (!message.trim()) return
+    setSending(true)
+    // Remplacez par votre endpoint réel : fetch('/api/feedback', { method: 'POST', body: JSON.stringify({ email, message }) })
+    await new Promise(r => setTimeout(r, 1200))
+    setSending(false)
+    setSent(true)
+  }
+
+  if (sent) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        style={{
+          maxWidth: 560, margin: '0 auto',
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(184,136,42,0.25)',
+          borderRadius: 4, padding: '2.5rem',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: '2.2rem', marginBottom: '0.8rem' }}>✦</div>
+        <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.4rem', fontWeight: 600, color: 'white', marginBottom: 8 }}>
+          Merci pour votre retour !
+        </p>
+        <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.45)', fontFamily: 'Jost, sans-serif' }}>
+          Votre message a bien été envoyé. Nous en tiendrons compte.
+        </p>
+        <button
+          onClick={() => { setSent(false); setMessage(''); setEmail('') }}
+          style={{
+            marginTop: '1.4rem', background: 'none',
+            border: '1px solid rgba(184,136,42,0.3)',
+            color: 'var(--gold)', padding: '0.65rem 1.4rem',
+            borderRadius: 2, cursor: 'pointer',
+            fontSize: '0.75rem', letterSpacing: '0.12em',
+            textTransform: 'uppercase', fontFamily: 'Jost, sans-serif',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--terracotta)'; e.currentTarget.style.color = '#E07A4F' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(184,136,42,0.3)'; e.currentTarget.style.color = 'var(--gold)' }}
+        >
+          Envoyer un autre message
+        </button>
+      </motion.div>
+    )
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ maxWidth: 560, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}
+    >
+      <input
+        type="email"
+        placeholder="Votre email (optionnel)"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        style={{
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(184,136,42,0.2)',
+          borderRadius: 2, padding: '0.85rem 1.1rem',
+          color: 'white', fontFamily: 'Jost, sans-serif',
+          fontSize: '0.9rem', fontWeight: 300,
+          outline: 'none', transition: 'border-color 0.2s',
+          width: '100%',
+        }}
+        onFocus={e => (e.target.style.borderColor = 'rgba(184,136,42,0.5)')}
+        onBlur={e => (e.target.style.borderColor = 'rgba(184,136,42,0.2)')}
+      />
+      <textarea
+        placeholder="Partagez votre remarque, suggestion ou retour d'expérience…"
+        value={message}
+        onChange={e => setMessage(e.target.value)}
+        rows={4}
+        style={{
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(184,136,42,0.2)',
+          borderRadius: 2, padding: '0.85rem 1.1rem',
+          color: 'white', fontFamily: 'Jost, sans-serif',
+          fontSize: '0.9rem', fontWeight: 300,
+          outline: 'none', resize: 'vertical',
+          transition: 'border-color 0.2s',
+          width: '100%', lineHeight: 1.7,
+        }}
+        onFocus={e => (e.target.style.borderColor = 'rgba(184,136,42,0.5)')}
+        onBlur={e => (e.target.style.borderColor = 'rgba(184,136,42,0.2)')}
+      />
+      <motion.button
+        whileHover={message.trim() ? { scale: 1.02 } : {}}
+        whileTap={message.trim() ? { scale: 0.97 } : {}}
+        onClick={handleSubmit}
+        disabled={!message.trim() || sending}
+        style={{
+          background: message.trim() ? 'var(--terracotta)' : 'rgba(255,255,255,0.07)',
+          color: message.trim() ? 'white' : 'rgba(255,255,255,0.3)',
+          border: 'none', borderRadius: 2,
+          padding: '1rem', cursor: message.trim() ? 'pointer' : 'not-allowed',
+          fontSize: '0.82rem', letterSpacing: '0.12em',
+          textTransform: 'uppercase', fontFamily: 'Jost, sans-serif',
+          fontWeight: 400, transition: 'all 0.3s',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          boxShadow: message.trim() ? '0 4px 20px rgba(196,98,45,0.3)' : 'none',
+        }}
+      >
+        {sending ? (
+          <><Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />Envoi en cours…</>
+        ) : (
+          <>✦ Envoyer ma remarque</>
+        )}
+      </motion.button>
+    </motion.div>
+  )
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function ClassifierPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -464,7 +632,6 @@ export default function ClassifierPage() {
     if (e.target.files?.length) handleFileSelect(e.target.files[0])
   }
 
-  // Load image from gallery URL
   const handleGallerySelect = async (url: string) => {
     setError(null)
     setResult(null)
@@ -527,7 +694,6 @@ export default function ClassifierPage() {
     try {
       const res = await fetch("/api/predict", { method: "POST", body: formData })
       const data = await res.json()
-      // If API returns top3, use it; otherwise simulate from single result
       if (!data.top3) {
         const allClasses = Object.keys(craftNames).filter(c => c !== data.class)
         const fakeTop3 = [
@@ -554,7 +720,6 @@ export default function ClassifierPage() {
 
   const top3 = result?.top3 ?? (result ? [{ class: result.class, confidence: result.confidence }] : [])
 
-  // Dynamic background per craft
   const craftBg: Record<string, string> = {
     babouche: 'radial-gradient(ellipse at 80% 20%, rgba(196,98,45,0.07) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(184,136,42,0.05) 0%, transparent 60%)',
     bijoux:   'radial-gradient(ellipse at 70% 30%, rgba(100,120,180,0.07) 0%, transparent 60%), radial-gradient(ellipse at 30% 70%, rgba(184,136,42,0.06) 0%, transparent 60%)',
@@ -718,10 +883,8 @@ export default function ClassifierPage() {
 
       <div style={{ minHeight: '100vh', background: 'var(--cream)', position: 'relative', transition: 'background 0.6s ease' }}>
 
-        {/* Custom cursor */}
         <ClassifierCursor />
 
-        {/* Dynamic background glow per craft */}
         <AnimatePresence>
           {result && (
             <motion.div
@@ -739,17 +902,14 @@ export default function ClassifierPage() {
           )}
         </AnimatePresence>
 
-        {/* Content layer above dynamic bg */}
         <div style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* TOP BAR */}
         <div style={{ background: 'var(--ink)', padding: '9px 0', textAlign: 'center' }}>
           <p style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
             ✦ Classificateur d'Artisanat Marocain — Propulsé par Deep Learning ✦
           </p>
         </div>
 
-        {/* HEADER */}
         <header style={{ background: 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50 }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 0' }}>
@@ -770,7 +930,6 @@ export default function ClassifierPage() {
           </div>
         </header>
 
-        {/* HERO BANNER */}
         <div style={{ position: 'relative', overflow: 'hidden' }}>
           <div className="zellige-bg pattern-overlay" style={{ position: 'absolute', inset: 0 }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '4.5rem 2rem', textAlign: 'center' }}>
@@ -790,7 +949,6 @@ export default function ClassifierPage() {
           </div>
         </div>
 
-        {/* MAIN CONTENT */}
         <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '4rem 2rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem', alignItems: 'start' }}>
 
@@ -809,7 +967,6 @@ export default function ClassifierPage() {
               </div>
               <div className="gold-divider" />
 
-              {/* Camera view */}
               <AnimatePresence>
                 {cameraOn && (
                   <motion.div
@@ -836,7 +993,6 @@ export default function ClassifierPage() {
                 )}
               </AnimatePresence>
 
-              {/* Image preview */}
               <AnimatePresence>
                 {preview && !cameraOn && (
                   <motion.div
@@ -856,7 +1012,6 @@ export default function ClassifierPage() {
                 )}
               </AnimatePresence>
 
-              {/* Empty state — Drag & Drop */}
               {!preview && !cameraOn && (
                 <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <motion.div
@@ -892,7 +1047,6 @@ export default function ClassifierPage() {
                       else setError('Veuillez déposer une image valide')
                     }}
                   >
-                    {/* Animated corner borders when dragging */}
                     <AnimatePresence>
                       {isDragging && (
                         <>
@@ -908,23 +1062,15 @@ export default function ClassifierPage() {
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.5 }}
                               transition={{ duration: 0.2, delay: i * 0.04 }}
-                              style={{
-                                position: 'absolute',
-                                width: 20, height: 20,
-                                ...corner,
-                              }}
+                              style={{ position: 'absolute', width: 20, height: 20, ...corner }}
                             />
                           ))}
                         </>
                       )}
                     </AnimatePresence>
 
-                    {/* Icon */}
                     <motion.div
-                      animate={isDragging
-                        ? { y: -8, scale: 1.15 }
-                        : { y: 0, scale: 1 }
-                      }
+                      animate={isDragging ? { y: -8, scale: 1.15 } : { y: 0, scale: 1 }}
                       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                       style={{ width: 56, height: 56, borderRadius: 2, background: isDragging ? 'rgba(196,98,45,0.1)' : 'var(--sand)', border: `1px solid ${isDragging ? 'var(--terracotta)' : 'rgba(184,136,42,0.3)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.2rem', transition: 'background 0.2s, border-color 0.2s' }}
                     >
@@ -932,20 +1078,13 @@ export default function ClassifierPage() {
                         animate={isDragging ? { rotate: [0, -10, 10, -5, 0] } : { rotate: 0 }}
                         transition={{ duration: 0.5, repeat: isDragging ? Infinity : 0, repeatDelay: 0.8 }}
                       >
-                        <Upload size={24} color={isDragging ? 'var(--terracotta)' : 'var(--terracotta)'} />
+                        <Upload size={24} color="var(--terracotta)" />
                       </motion.div>
                     </motion.div>
 
-                    {/* Text */}
                     <AnimatePresence mode="wait">
                       {isDragging ? (
-                        <motion.div
-                          key="dragging"
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -6 }}
-                          transition={{ duration: 0.2 }}
-                        >
+                        <motion.div key="dragging" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
                           <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--terracotta)', marginBottom: 4, fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}>
                             Relâchez pour analyser
                           </p>
@@ -954,13 +1093,7 @@ export default function ClassifierPage() {
                           </p>
                         </motion.div>
                       ) : (
-                        <motion.div
-                          key="idle"
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -6 }}
-                          transition={{ duration: 0.2 }}
-                        >
+                        <motion.div key="idle" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
                           <p style={{ fontSize: '1.05rem', fontWeight: 500, color: 'var(--ink)', marginBottom: 6, fontFamily: 'Jost, sans-serif' }}>
                             Télécharger une image
                           </p>
@@ -979,14 +1112,12 @@ export default function ClassifierPage() {
 
               <input type="file" accept="image/*" hidden ref={fileInputRef} onChange={handleFileInput} />
 
-              {/* Gallery panel */}
               <AnimatePresence>
                 {showGallery && !preview && (
                   <CraftGallery onImageSelect={handleGallerySelect} />
                 )}
               </AnimatePresence>
 
-              {/* Error */}
               <AnimatePresence>
                 {error && (
                   <motion.div
@@ -1015,7 +1146,6 @@ export default function ClassifierPage() {
               </div>
               <div className="gold-divider" />
 
-              {/* Classify button */}
               <AnimatePresence>
                 {preview && !result && (
                   <motion.button
@@ -1034,7 +1164,6 @@ export default function ClassifierPage() {
                 )}
               </AnimatePresence>
 
-              {/* Loading */}
               <AnimatePresence>
                 {loading && (
                   <motion.div
@@ -1056,7 +1185,6 @@ export default function ClassifierPage() {
                     transition={{ type: 'spring', stiffness: 80 }}
                     style={{ background: 'white', borderRadius: 4, overflow: 'hidden', border: '1px solid rgba(184,136,42,0.2)' }}
                   >
-                    {/* Result header */}
                     <div style={{ background: 'linear-gradient(135deg, var(--terracotta), var(--terracotta-dark))', padding: '2.2rem 2rem', position: 'relative', overflow: 'hidden' }}>
                       <div className="pattern-overlay" style={{ position: 'absolute', inset: 0, opacity: 0.5 }} />
                       <div style={{ position: 'relative', zIndex: 1 }}>
@@ -1083,7 +1211,6 @@ export default function ClassifierPage() {
 
                     <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
 
-                      {/* ── TOP 3 PREDICTIONS ── */}
                       <div>
                         <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost', marginBottom: '1rem' }}>
                           ✦ Top 3 Prédictions
@@ -1093,24 +1220,20 @@ export default function ClassifierPage() {
 
                       <div className="gold-divider" />
 
-                      {/* ── MOROCCO MAP ── */}
+                      {/* ── VRAIE CARTE MAROC ── */}
                       <div>
                         <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: 5 }}>
                           <MapPin size={12} color="var(--gold)" />
                           Région d'origine — Maroc
                         </p>
-                        <div style={{ background: 'var(--sand)', borderRadius: 4, padding: '1rem', border: '1px solid rgba(184,136,42,0.15)' }}>
-                          <MoroccoMap activeCraft={result.class} />
-                        </div>
+                        <MoroccoMap activeCraft={result.class} />
                       </div>
 
-                      {/* Heritage badge */}
                       <div style={{ padding: '1.1rem', background: 'var(--sand)', border: '1px solid rgba(184,136,42,0.15)', borderRadius: 2, textAlign: 'center' }}>
                         <p style={{ fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 5, fontFamily: 'Jost' }}>Héritage</p>
                         <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--ink)', fontFamily: 'Cormorant Garamond, serif' }}>{craftHeritage[result.class]}</p>
                       </div>
 
-                      {/* Reset */}
                       <button onClick={handleReset} className="btn-ghost" style={{ width: '100%', padding: '1rem', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                         <RefreshCw size={14} />Nouvelle analyse
                       </button>
@@ -1119,7 +1242,6 @@ export default function ClassifierPage() {
                 )}
               </AnimatePresence>
 
-              {/* Placeholder */}
               <AnimatePresence>
                 {!preview && !cameraOn && !result && !loading && (
                   <motion.div
@@ -1174,19 +1296,13 @@ export default function ClassifierPage() {
                   >
                     <AnimatePresence mode="wait">
                       {!isFlipped ? (
-                        /* ── FRONT ── */
                         <motion.div
                           key="front"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.2 }}
-                          style={{
-                            padding: '1.8rem 1rem',
-                            display: 'flex', flexDirection: 'column',
-                            alignItems: 'center', justifyContent: 'center',
-                            minHeight: '220px',
-                          }}
+                          style={{ padding: '1.8rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '220px' }}
                         >
                           <div style={{ fontSize: '2.6rem', marginBottom: '10px' }}>{craftIcons[key]}</div>
                           <p style={{ fontSize: '1.15rem', fontWeight: 600, fontFamily: 'Cormorant Garamond, serif', margin: 0, lineHeight: 1.2 }}>
@@ -1198,20 +1314,13 @@ export default function ClassifierPage() {
                           <div style={{ marginTop: 10, width: 24, height: 1, background: 'rgba(184,136,42,0.3)' }} />
                         </motion.div>
                       ) : (
-                        /* ── BACK ── */
                         <motion.div
                           key="back"
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -8 }}
                           transition={{ duration: 0.25 }}
-                          style={{
-                            padding: '1.4rem 1rem',
-                            display: 'flex', flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '0.6rem',
-                            background: 'linear-gradient(160deg, white 0%, rgba(245,237,216,0.4) 100%)',
-                          }}
+                          style={{ padding: '1.4rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', background: 'linear-gradient(160deg, white 0%, rgba(245,237,216,0.4) 100%)' }}
                         >
                           <div style={{ fontSize: '1.4rem' }}>{craftIcons[key]}</div>
                           <p style={{ fontWeight: 600, margin: 0, fontFamily: 'Cormorant Garamond, serif', fontSize: '1rem', color: 'var(--ink)' }}>
@@ -1237,9 +1346,26 @@ export default function ClassifierPage() {
           </motion.div>
         </main>
 
-        {/* FOOTER */}
-        <footer style={{ background: 'var(--ink)', color: 'white', padding: '2.5rem 0', marginTop: '2rem' }}>
+        <footer style={{ background: 'var(--ink)', color: 'white', padding: '3.5rem 0 2.5rem', marginTop: '2rem' }}>
           <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
+
+            {/* Contact zone */}
+            <div style={{ marginBottom: '3rem' }}>
+              <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
+                <span style={{ fontSize: '0.72rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--gold)', fontFamily: 'Jost, sans-serif', fontWeight: 500 }}>
+                  ✦ Vos Remarques
+                </span>
+                <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.6rem', fontWeight: 600, color: 'white', marginTop: 6, lineHeight: 1.3 }}>
+                  Une suggestion ? Un retour ?
+                </p>
+                <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.45)', marginTop: 6, fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
+                  Votre avis nous aide à améliorer Heritage AI
+                </p>
+              </div>
+
+              <FeedbackForm />
+            </div>
+
             <div className="gold-divider" style={{ marginBottom: '1.5rem' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1256,7 +1382,7 @@ export default function ClassifierPage() {
         </footer>
 
         <canvas ref={canvasRef} style={{ display: 'none' }} />
-        </div>{/* end content layer */}
+        </div>
       </div>
     </>
   )
