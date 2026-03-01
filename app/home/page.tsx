@@ -18,6 +18,79 @@ function useIsMobile(breakpoint = 768) {
   return isMobile
 }
 
+// ── Custom cursor (desktop only) ─────────────────────────────────────────────
+function CustomCursor() {
+  const [pos, setPos] = useState({ x: -100, y: -100 })
+  const [isHovering, setIsHovering] = useState(false)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const move = (e: MouseEvent) => { setPos({ x: e.clientX, y: e.clientY }); setVisible(true) }
+    const over = (e: MouseEvent) => {
+      const el = e.target as HTMLElement
+      setIsHovering(!!(el.closest('button') || el.closest('a') || el.closest('.craft-card')))
+    }
+    const leave = () => setVisible(false)
+    window.addEventListener('mousemove', move)
+    window.addEventListener('mouseover', over)
+    document.addEventListener('mouseleave', leave)
+    return () => {
+      window.removeEventListener('mousemove', move)
+      window.removeEventListener('mouseover', over)
+      document.removeEventListener('mouseleave', leave)
+    }
+  }, [])
+
+  return (
+    <>
+      <motion.div
+        animate={{ x: pos.x - 10, y: pos.y - 10, scale: isHovering ? 1.8 : 1, opacity: visible ? 1 : 0 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 35, mass: 0.3 }}
+        style={{
+          position: 'fixed', top: 0, left: 0, zIndex: 99999,
+          width: 20, height: 20, pointerEvents: 'none',
+          transform: 'rotate(45deg)',
+          background: isHovering ? 'rgba(196,98,45,0.15)' : 'transparent',
+          border: `2px solid ${isHovering ? 'var(--terracotta)' : 'var(--gold)'}`,
+          transition: 'border-color 0.2s, background 0.2s',
+        }}
+      />
+      <motion.div
+        animate={{ x: pos.x - 3, y: pos.y - 3, opacity: visible ? 0.7 : 0 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 28, mass: 0.6 }}
+        style={{
+          position: 'fixed', top: 0, left: 0, zIndex: 99998,
+          width: 6, height: 6, borderRadius: '50%',
+          background: 'var(--terracotta)', pointerEvents: 'none',
+        }}
+      />
+    </>
+  )
+}
+
+// ── Animated counter ──────────────────────────────────────────────────────────
+function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref as React.RefObject<Element>, { once: true, margin: '-50px' })
+
+  useEffect(() => {
+    if (!inView) return
+    const duration = 2000
+    const steps = 60
+    let current = 0
+    const increment = target / steps
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= target) { setCount(target); clearInterval(timer) }
+      else setCount(Math.floor(current))
+    }, duration / steps)
+    return () => clearInterval(timer)
+  }, [inView, target])
+
+  return <span ref={ref}>{count}{suffix}</span>
+}
+
 export default function HomePage() {
   const router = useRouter()
   const isMobile = useIsMobile()
@@ -143,7 +216,8 @@ export default function HomePage() {
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; font-size: 18px; }
-        body { background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; overflow-x: hidden; }
+        body { background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
+        a, button { cursor: none; }
 
         .zellige-bg {
           background-color: var(--terracotta-dark);
@@ -269,6 +343,8 @@ export default function HomePage() {
       `}</style>
 
       <div style={{ minHeight: '100vh', background: 'var(--cream)' }}>
+        {/* Custom cursor — desktop only */}
+        {!isMobile && <CustomCursor />}
 
         {/* TOP BAR */}
         {!isMobile && (
@@ -371,15 +447,29 @@ export default function HomePage() {
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div className="stats-container" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
               {[
-                { num: '5', label: 'Artisanats Classifiés' },
-                { num: '12+', label: 'Siècles de Tradition' },
-                { num: '98%', label: "Précision de l'IA" },
-                { num: '10K+', label: 'Œuvres Analysées' },
+                { target: 5,     suffix: '',   label: 'Artisanats Classifiés' },
+                { target: 12,    suffix: '+',  label: 'Siècles de Tradition' },
+                { target: 98,    suffix: '%',  label: "Précision de l'IA" },
+                { target: 10000, suffix: '+',  label: 'Œuvres Analysées' },
               ].map((stat, i) => (
-                <div key={i} className="stats-item">
-                  <p className="shimmer-text" style={{ fontSize: '2.6rem', fontWeight: 600, fontFamily: 'Cormorant Garamond, serif' }}>{stat.num}</p>
-                  <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.45)' }}>{stat.label}</p>
-                </div>
+                <motion.div
+                  key={i}
+                  className="stats-item"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                >
+                  <p className="shimmer-text" style={{ fontSize: '2.6rem', fontWeight: 600, fontFamily: 'Cormorant Garamond, serif' }}>
+                    {stat.target === 10000
+                      ? <><AnimatedCounter target={10} suffix="K" />{stat.suffix}</>
+                      : <AnimatedCounter target={stat.target} suffix={stat.suffix} />
+                    }
+                  </p>
+                  <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', fontFamily: 'Jost' }}>
+                    {stat.label}
+                  </p>
+                </motion.div>
               ))}
             </div>
           </div>
