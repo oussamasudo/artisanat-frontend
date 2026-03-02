@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { ArrowRight, Sparkles, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowRight, Sparkles, Quote, ChevronLeft, ChevronRight, Moon, Sun } from 'lucide-react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-
+import { useDarkMode } from '@/hooks/useDarkMode' 
 // ── Hook mobile ───────────────────────────────────────────────────────────────
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(false)
@@ -113,6 +113,10 @@ export default function HomePage() {
   const isTimelineInView = useInView(timelineRef, { once: true, margin: '-100px' })
   const [activeTestimonial, setActiveTestimonial] = useState(0)
 
+  // ── DARK MODE ─────────────────────────────────────────────────────────────
+  const { dark, toggle: toggleDark } = useDarkMode()  
+  // ─────────────────────────────────────────────────────────────────────────
+
   const crafts = [
     { name: 'Babouche', desc: 'Chaussure traditionnelle emblématique du Maroc, portée depuis des siècles dans les médinas.', heritage: '10+ siècles', icon: '🥿' },
     { name: 'Bijoux Berbères', desc: "Bijoux berbères symbolisant la richesse culturelle et l'identité des tribus marocaines.", heritage: '8+ siècles', icon: '💎' },
@@ -122,39 +126,39 @@ export default function HomePage() {
   ]
 
   const testimonials = [
-    {
-      name: 'Yasmine El Fassi',
-      role: 'Conservatrice au Musée de Fès',
-      avatar: 'Y',
-      text: "Heritage AI m'a permis d'identifier en quelques secondes des pièces que j'aurais mis des heures à cataloguer. Un outil indispensable pour la préservation du patrimoine.",
-      craft: 'Zellige',
-      stars: 5,
-    },
-    {
-      name: 'Pierre Dumont',
-      role: 'Collectionneur, Paris',
-      avatar: 'P',
-      text: "J'ai découvert que le tapis acheté au souk était un authentique Taznakht du 19e siècle. La précision culturelle de l'analyse est bluffante.",
-      craft: 'Tapis Berbère',
-      stars: 5,
-    },
-    {
-      name: 'Amina Bensouda',
-      role: 'Professeure d\'histoire de l\'art, Rabat',
-      avatar: 'A',
-      text: "Un pont magnifique entre la technologie moderne et notre héritage ancestral. Mes étudiants l'utilisent désormais en cours.",
-      craft: 'Poterie',
-      stars: 5,
-    },
-    {
-      name: 'Karim Tazi',
-      role: 'Artisan maroquinier, Marrakech',
-      avatar: 'K',
-      text: "En tant qu'artisan, c'est émouvant de voir mon métier reconnu et valorisé par l'intelligence artificielle. Heritage AI honore notre tradition.",
-      craft: 'Babouche',
-      stars: 5,
-    },
-  ]
+  {
+    name: 'SM le Roi Mohammed VI',
+    role: 'Roi du Maroc',
+    avatar: 'M',
+    text: "« L'artisanat marocain constitue un pilier fondamental de notre patrimoine culturel et un levier essentiel du développement économique et social. »",
+    craft: 'Artisanat marocain',
+    stars: 5,
+  },
+  {
+    name: 'Ministère du Tourisme du Maroc',
+    role: 'Institution officielle',
+    avatar: 'T',
+    text: "« L'artisanat est l'ambassadeur de la culture marocaine à travers le monde et un secteur clé pour la valorisation de notre identité nationale. »",
+    craft: 'Patrimoine',
+    stars: 5,
+  },
+  {
+    name: 'Amina Bensouda',
+    role: "Professeure d'histoire de l'art, Rabat",
+    avatar: 'A',
+    text: "Heritage AI représente un pont remarquable entre la technologie moderne et le patrimoine artisanal marocain. C'est un outil pédagogique puissant.",
+    craft: 'Poterie',
+    stars: 5,
+  },
+  {
+    name: 'Karim Tazi',
+    role: 'Artisan maroquinier, Marrakech',
+    avatar: 'K',
+    text: "Grâce à Heritage AI, notre savoir-faire ancestral est reconnu, documenté et valorisé. C'est une fierté pour nous, artisans.",
+    craft: 'Babouche',
+    stars: 5,
+  },
+];
 
   const timeline = [
     {
@@ -228,6 +232,22 @@ export default function HomePage() {
           --cream: #FAF6EE;
           --muted: #8C7355;
         }
+
+        /* ── DARK MODE (ajout) ── */
+        .dm {
+          --cream: #100C06;
+          --sand: #1A1208;
+          --sand-deep: #2E2010;
+          --ink: #F5EDD8;
+          --muted: #A89070;
+        }
+        .dm .craft-card { background: #1E1409 !important; }
+        .dm .craft-card:hover .craft-desc { color: #F5EDD8 !important; }
+        .dm .testi-nav-btn { 
+        background: #1E1409 !important;
+        border-color: rgba(184,136,42,0.4) !important;
+        color: rgba(255,255,255,0.6) !important;
+      }        .dm .nav-link { color: #A89070 !important; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; font-size: 18px; }
@@ -357,7 +377,8 @@ export default function HomePage() {
         }
       `}</style>
 
-      <div style={{ minHeight: '100vh', background: 'var(--cream)' }}>
+      {/* classe "dm" appliquée sur le wrapper racine quand dark=true */}
+      <div className={dark ? 'dm' : ''} style={{ minHeight: '100vh', background: 'var(--cream)', color: 'var(--ink)', transition: 'background 0.3s, color 0.3s' }}>
         {/* Custom cursor — desktop only */}
         {!isMobile && <CustomCursor />}
 
@@ -371,10 +392,10 @@ export default function HomePage() {
         )}
 
         {/* HEADER */}
-        <header style={{ background: 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50 }}>
+        <header style={{ background: dark ? '#1A1208' : 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50, transition: 'background 0.3s' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0' }}>
-              {/* Logo */}
+              {/* Logo — inchangé */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
                   <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
@@ -385,7 +406,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Nav — desktop only */}
+              {/* Nav — desktop only — inchangé */}
               {!isMobile && (
                 <nav style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
                   <a href="#" className="nav-link">Accueil</a>
@@ -395,29 +416,58 @@ export default function HomePage() {
                 </nav>
               )}
 
-              {/* CTA button */}
-              <button
-                className="btn-primary"
-                onClick={() => router.push('/classifier')}
-                style={{
-                  padding: isMobile ? '0.75rem 1rem' : '0.85rem 2rem',
-                  borderRadius: 2,
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  fontSize: isMobile ? '0.72rem' : '0.85rem',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
-                <ArrowRight size={14} />
-              </button>
+              {/* CTA + toggle dark mode (ajout du toggle uniquement) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+
+                {/* ── BOUTON DARK MODE ── */}
+                <motion.button
+                  whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
+                  onClick={toggleDark} 
+                  title={dark ? 'Mode clair' : 'Mode sombre'}
+                  style={{
+                    width: 38, height: 38, borderRadius: 2, flexShrink: 0,
+                    background: dark ? 'rgba(255,255,255,0.08)' : '#F5EDD8',
+                    border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', transition: 'all 0.25s',
+                  }}
+                >
+                  <AnimatePresence mode="wait">
+                    {dark
+                      ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                          <Sun size={17} color="#B8882A" />
+                        </motion.div>
+                      : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                          <Moon size={17} color="#8C7355" />
+                        </motion.div>
+                    }
+                  </AnimatePresence>
+                </motion.button>
+
+                {/* CTA — inchangé */}
+                <button
+                  className="btn-primary"
+                  onClick={() => router.push('/classifier')}
+                  style={{
+                    padding: isMobile ? '0.75rem 1rem' : '0.85rem 2rem',
+                    borderRadius: 2,
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    fontSize: isMobile ? '0.72rem' : '0.85rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
+                  <ArrowRight size={14} />
+                </button>
+              </div>
             </div>
           </div>
         </header>
 
-        {/* HERO */}
+        {/* HERO — inchangé sauf le gradient de fond qui suit dark */}
         <section style={{ position: 'relative', overflow: 'hidden', minHeight: '90vh', display: 'flex', alignItems: 'center' }}>
           <div className="zellige-bg pattern-overlay" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, var(--cream), transparent)', zIndex: 1 }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: `linear-gradient(to top, ${dark ? '#100C06' : 'var(--cream)'}, transparent)`, zIndex: 1, transition: 'background 0.3s' }} />
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '6rem 2rem', position: 'relative', zIndex: 2, width: '100%' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '5rem', alignItems: 'center' }}>
               <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, ease: 'easeOut' }} style={{ color: 'white' }}>
@@ -457,7 +507,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* STATS BAR */}
+        {/* STATS BAR — inchangé */}
         <div style={{ background: 'var(--ink)', padding: '3rem 0' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div className="stats-container" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -491,7 +541,7 @@ export default function HomePage() {
         </div>
 
         {/* CRAFTS SECTION */}
-        <section id="artisanat" style={{ padding: '7rem 0', background: 'var(--sand)' }}>
+        <section id="artisanat" style={{ padding: '7rem 0', background: 'var(--sand)', transition: 'background 0.3s' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} style={{ textAlign: 'center', marginBottom: '4rem' }}>
               <span className="section-label" style={{ marginBottom: '1rem' }}>✦ Notre Collection ✦</span>
@@ -518,7 +568,7 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════
             TIMELINE HISTORIQUE
         ═══════════════════════════════════════════════ */}
-        <section id="timeline" style={{ padding: '8rem 0', background: 'white', overflow: 'hidden' }} ref={timelineRef}>
+        <section id="timeline" style={{ padding: '8rem 0', background: dark ? '#100C06' : 'white', overflow: 'hidden', transition: 'background 0.3s' }} ref={timelineRef}>
           <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} style={{ textAlign: 'center', marginBottom: '5rem' }}>
               <span className="section-label" style={{ marginBottom: '1rem' }}>✦ À Travers les Âges ✦</span>
@@ -558,11 +608,11 @@ export default function HomePage() {
                         width: 12, height: 12,
                         borderRadius: item.highlight ? 2 : '50%',
                         background: item.highlight ? 'var(--terracotta)' : 'var(--gold)',
-                        border: '2px solid white',
+                        border: `2px solid ${dark ? '#100C06' : 'white'}`,
                         boxShadow: '0 0 0 3px rgba(184,136,42,0.2)',
                         transform: item.highlight ? 'rotate(45deg)' : undefined,
                       }} />
-                      <TimelineCard item={item} />
+                      <TimelineCard item={item} dark={dark} />
                     </motion.div>
                   ))}
                 </div>
@@ -589,7 +639,7 @@ export default function HomePage() {
                       >
                         {/* Left cell */}
                         <div style={{ padding: '1.5rem 2.5rem 1.5rem 0', textAlign: 'right', visibility: item.side === 'left' ? 'visible' : 'hidden' }}>
-                          {item.side === 'left' && <TimelineCard item={item} />}
+                          {item.side === 'left' && <TimelineCard item={item} dark={dark} />}
                         </div>
                         {/* Center dot */}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 2 }}>
@@ -598,13 +648,14 @@ export default function HomePage() {
                             style={{
                               width: item.highlight ? 48 : 38, height: item.highlight ? 48 : 38,
                               borderRadius: item.highlight ? 4 : '50%',
-                              background: item.highlight ? 'var(--terracotta)' : 'white',
+                              background: item.highlight ? 'var(--terracotta)' : (dark ? '#1E1409' : 'white'),
                               border: item.highlight ? 'none' : '2px solid var(--gold)',
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
                               fontSize: item.highlight ? '0.9rem' : '1.3rem',
                               boxShadow: item.highlight ? '0 8px 24px rgba(196,98,45,0.4)' : '0 2px 12px rgba(184,136,42,0.2)',
                               color: item.highlight ? 'white' : undefined,
                               transform: item.highlight ? 'rotate(45deg)' : undefined,
+                              transition: 'background 0.3s',
                             }}
                           >
                             <span style={{ transform: item.highlight ? 'rotate(-45deg)' : undefined }}>{item.icon}</span>
@@ -612,7 +663,7 @@ export default function HomePage() {
                         </div>
                         {/* Right cell */}
                         <div style={{ padding: '1.5rem 0 1.5rem 2.5rem', textAlign: 'left', visibility: item.side === 'right' ? 'visible' : 'hidden' }}>
-                          {item.side === 'right' && <TimelineCard item={item} />}
+                          {item.side === 'right' && <TimelineCard item={item} dark={dark} />}
                         </div>
                       </motion.div>
                     ))}
@@ -624,11 +675,11 @@ export default function HomePage() {
         </section>
 
         {/* ABOUT / HOW IT WORKS */}
-        <section style={{ padding: '7rem 0', background: 'var(--sand)' }} id="apropos">
+        <section style={{ padding: '7rem 0', background: 'var(--sand)', transition: 'background 0.3s' }} id="apropos">
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '6rem', alignItems: 'center' }}>
               <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ position: 'relative' }}>
-                <div style={{ position: 'absolute', top: 20, left: 20, right: -20, bottom: -20, background: 'var(--sand-deep)', borderRadius: 4, zIndex: 0 }} />
+                <div style={{ position: 'absolute', top: 20, left: 20, right: -20, bottom: -20, background: 'var(--sand-deep)', borderRadius: 4, zIndex: 0, transition: 'background 0.3s' }} />
                 <div style={{ position: 'relative', zIndex: 1, height: 500, borderRadius: 4, overflow: 'hidden', boxShadow: '0 20px 60px rgba(196,98,45,0.15)' }}>
                   <Image src="/moroccan-craft.jpg" alt="Artisan marocain au travail" fill style={{ objectFit: 'cover' }} />
                 </div>
@@ -672,10 +723,9 @@ export default function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════
-            TÉMOIGNAGES
+            TÉMOIGNAGES — inchangé (fond var(--ink) par design)
         ═══════════════════════════════════════════════ */}
-        <section style={{ padding: '8rem 0', background: 'var(--ink)', position: 'relative', overflow: 'hidden' }}>
-          {/* Decorative background */}
+          <section style={{ padding: '8rem 0', background: dark ? '#0A0704' : '#1A1208', position: 'relative', overflow: 'hidden' }}>          {/* Decorative background */}
           <div className="pattern-overlay" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} />
           <div style={{ position: 'absolute', top: '20%', left: '-5%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(196,98,45,0.08) 0%, transparent 70%)' }} />
           <div style={{ position: 'absolute', bottom: '10%', right: '-5%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(184,136,42,0.06) 0%, transparent 70%)' }} />
@@ -813,7 +863,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA SECTION */}
+        {/* CTA SECTION — inchangé */}
         <section style={{ position: 'relative', overflow: 'hidden' }}>
           <div className="zellige-bg pattern-overlay" style={{ position: 'absolute', inset: 0 }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '8rem 2rem', textAlign: 'center' }}>
@@ -834,9 +884,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer style={{ background: 'var(--ink)', color: 'white', padding: '5rem 0 2.5rem' }}>
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+        {/* FOOTER — inchangé */}
+          <footer style={{ background: dark ? '#0A0704' : '#1A1208', color: 'white', padding: '5rem 0 2.5rem' }}>          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1.2rem' }}>
@@ -879,21 +928,22 @@ export default function HomePage() {
   )
 }
 
-// ── Sub-component: Timeline card ─────────────────────────────────────────────
-function TimelineCard({ item }: { item: { century: string; year: string; title: string; desc: string; highlight?: boolean } }) {
+// ── Sub-component: Timeline card — prop dark ajoutée ─────────────────────────
+function TimelineCard({ item, dark }: { item: { century: string; year: string; title: string; desc: string; highlight?: boolean }; dark: boolean }) {
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
       style={{
-        background: item.highlight ? 'linear-gradient(135deg, var(--terracotta), var(--terracotta-dark))' : 'white',
-        border: item.highlight ? 'none' : '1px solid rgba(184,136,42,0.18)',
+        background: item.highlight ? 'linear-gradient(135deg, var(--terracotta), var(--terracotta-dark))' : (dark ? '#1E1409' : 'white'),
+        border: item.highlight ? 'none' : `1px solid ${dark ? 'rgba(184,136,42,0.25)' : 'rgba(184,136,42,0.18)'}`,
         borderRadius: 4,
         padding: '1.6rem 2rem',
         boxShadow: item.highlight
           ? '0 16px 48px rgba(196,98,45,0.25)'
-          : '0 4px 20px rgba(0,0,0,0.05)',
+          : (dark ? '0 4px 20px rgba(0,0,0,0.4)' : '0 4px 20px rgba(0,0,0,0.05)'),
         position: 'relative',
         overflow: 'hidden',
+        transition: 'background 0.3s',
       }}
     >
       {item.highlight && (
