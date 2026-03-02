@@ -137,43 +137,35 @@ function ShareDownloadBar({ result, preview, dark }: { result: PredictionResult;
       canvas.width = 800; canvas.height = 500
       const ctx = canvas.getContext('2d')!
 
-      // Background
       ctx.fillStyle = dark ? '#100C06' : '#FAF6EE'
       ctx.fillRect(0, 0, 800, 500)
 
-      // Terracotta header
       ctx.fillStyle = '#C4622D'
       ctx.fillRect(0, 0, 800, 140)
       ctx.fillStyle = 'rgba(255,255,255,0.05)'
       for (let x = 0; x < 800; x += 30) for (let y = 0; y < 140; y += 30) { ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill() }
 
-      // Preview image (left square)
       const img = new Image(); img.crossOrigin = 'anonymous'
       await new Promise<void>((res) => { img.onload = () => res(); img.onerror = () => res(); img.src = preview })
       ctx.save(); ctx.beginPath(); (ctx as any).roundRect?.(30, 30, 200, 200, 8) ?? ctx.rect(30, 30, 200, 200); ctx.clip(); ctx.drawImage(img, 30, 30, 200, 200); ctx.restore()
 
-      // Craft name
       ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 34px Georgia, serif'
       ctx.fillText(`${craftIcons[result.class]} ${craftNames[result.class]}`, 250, 80)
       ctx.fillStyle = 'rgba(255,255,255,0.72)'; ctx.font = '16px Arial'
       ctx.fillText(`📍 ${craftRegions[result.class]}  ·  ${craftHeritage[result.class]}`, 252, 112)
 
-      // Confidence badge
       ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fillRect(252, 122, 210, 34)
       ctx.fillStyle = '#fff'; ctx.font = 'bold 18px Georgia, serif'
       ctx.fillText(`Confiance : ${(result.confidence * 100).toFixed(1)}%`, 262, 146)
 
-      // Divider
       ctx.strokeStyle = 'rgba(184,136,42,0.35)'; ctx.lineWidth = 1
       ctx.beginPath(); ctx.moveTo(30, 258); ctx.lineTo(770, 258); ctx.stroke()
 
-      // Top3 bars
       const top3 = result.top3 ?? [{ class: result.class, confidence: result.confidence }]
       top3.forEach((item, i) => {
         const y = 288 + i * 58
         ctx.fillStyle = dark ? 'rgba(255,255,255,0.7)' : '#1A1208'; ctx.font = `${i === 0 ? 'bold' : 'normal'} 14px Arial`
         ctx.fillText(`${craftIcons[item.class]} ${craftNames[item.class]}`, 30, y)
-        ctx.fillStyle = 'var(--terracotta)' ?? '#C4622D'; ctx.font = 'bold 14px Arial'
         ctx.fillStyle = i === 0 ? '#C4622D' : '#8C7355'
         ctx.fillText(`${(item.confidence * 100).toFixed(1)}%`, 740, y)
         ctx.fillStyle = dark ? 'rgba(255,255,255,0.1)' : '#EBD9B4'
@@ -182,7 +174,6 @@ function ShareDownloadBar({ result, preview, dark }: { result: PredictionResult;
         ctx.fillRect(30, y + 7, item.confidence * 500, i === 0 ? 9 : 6)
       })
 
-      // Branding
       ctx.fillStyle = 'rgba(184,136,42,0.55)'; ctx.font = '12px Arial'
       ctx.fillText('✦ Heritage AI — Classificateur d\'Artisanat Marocain', 30, 480)
 
@@ -481,7 +472,6 @@ export default function ClassifierPage() {
     zellige:  'radial-gradient(ellipse at 30% 30%, rgba(30,100,160,0.07) 0%, transparent 60%)',
   }
 
-  // Dark mode dynamic background
   const pageBg = dark ? '#100C06' : '#FAF6EE'
   const cardBg = dark ? '#231A0F' : 'white'
   const cardBorder = dark ? 'rgba(184,136,42,0.3)' : 'rgba(184,136,42,0.2)'
@@ -530,18 +520,20 @@ export default function ClassifierPage() {
         </AnimatePresence>
 
         <div style={{ position: 'relative', zIndex: 1 }}>
-          {/* TOP BAR */}
-          <div style={{ background: 'var(--ink)', padding: '9px 0', textAlign: 'center' }}>
+
+          {/* ✅ TOP BAR — fond fixe sombre */}
+          <div style={{ background: '#1A1208', padding: '9px 0', textAlign: 'center' }}>
             <p style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
               ✦ Classificateur d'Artisanat Marocain — Propulsé par Deep Learning ✦
             </p>
           </div>
 
-          {/* HEADER */}
+          {/* ✅ HEADER — dark mode à l'extrême droite */}
           <motion.header animate={{ backgroundColor: dark ? '#1A1208' : '#ffffff' }} transition={{ duration: 0.35 }}
             style={{ borderBottom: `1px solid ${cardBorder}`, position: 'sticky', top: 0, zIndex: 50 }}>
             <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 0', flexWrap: 'wrap', gap: '0.8rem' }}>
+                {/* Logo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2 }}>
                     <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
@@ -551,12 +543,14 @@ export default function ClassifierPage() {
                     <p style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Classificateur</p>
                   </div>
                 </div>
+
+                {/* ✅ Ordre : Compteur → Retour → Dark mode à l'extrême droite */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <ClassificationCounter count={classificationCount} dark={dark} />
-                  <DarkModeToggle dark={dark} onToggle={toggleDark} />
                   <Link href="/" className="nav-link" style={{ color: dark ? 'rgba(255,255,255,0.5)' : 'var(--muted)' }}>
                     <ArrowLeft size={15} />Retour à l'accueil
                   </Link>
+                  <DarkModeToggle dark={dark} onToggle={toggleDark} />
                 </div>
               </div>
             </div>
@@ -694,7 +688,6 @@ export default function ClassifierPage() {
                   {result && !loading && (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 80 }}
                       style={{ background: cardBg, borderRadius: 4, overflow: 'hidden', border: `1px solid ${cardBorder}` }}>
-                      {/* Result header */}
                       <div style={{ background: 'linear-gradient(135deg, var(--terracotta), var(--terracotta-dark))', padding: '2.2rem 2rem', position: 'relative', overflow: 'hidden' }}>
                         <div className="pattern-overlay" style={{ position: 'absolute', inset: 0, opacity: 0.5 }} />
                         <div style={{ position: 'relative', zIndex: 1 }}>
@@ -715,38 +708,28 @@ export default function ClassifierPage() {
                       </div>
 
                       <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-                        {/* Share + Download */}
                         <div>
                           <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: 5 }}>
                             <Share2 size={12} color="var(--gold)" />Partager & Exporter
                           </p>
                           <ShareDownloadBar result={result} preview={preview} dark={dark} />
                         </div>
-
                         <div className="gold-divider" />
-
-                        {/* Top 3 */}
                         <div>
                           <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost', marginBottom: '1rem' }}>✦ Top 3 Prédictions</p>
                           <Top3Bars top3={top3} dark={dark} />
                         </div>
-
                         <div className="gold-divider" />
-
-                        {/* Map */}
                         <div>
                           <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: 5 }}>
                             <MapPin size={12} color="var(--gold)" />Région d'origine — Maroc
                           </p>
                           <MoroccoMap activeCraft={result.class} dark={dark} />
                         </div>
-
-                        {/* Heritage */}
                         <div style={{ padding: '1.1rem', background: dark ? '#2E2010' : 'var(--sand)', border: `1px solid ${dark ? 'rgba(184,136,42,0.2)' : 'rgba(184,136,42,0.15)'}`, borderRadius: 2, textAlign: 'center' }}>
                           <p style={{ fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 5, fontFamily: 'Jost' }}>Héritage</p>
                           <p style={{ fontSize: '1.1rem', fontWeight: 600, color: headingColor, fontFamily: 'Cormorant Garamond, serif' }}>{craftHeritage[result.class]}</p>
                         </div>
-
                         <button onClick={handleReset} className="btn-ghost" style={{ width: '100%', padding: '1rem', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, color: 'var(--muted)' }}>
                           <RefreshCw size={14} />Nouvelle analyse
                         </button>
@@ -769,8 +752,8 @@ export default function ClassifierPage() {
             </div>
           </main>
 
-          {/* FOOTER */}
-          <footer style={{ background: 'var(--ink)', color: 'white', padding: '3.5rem 0 2.5rem', marginTop: '2rem' }}>
+          {/* ✅ FOOTER — fond fixe sombre */}
+          <footer style={{ background: dark ? '#0A0704' : '#1A1208', color: 'white', padding: '3.5rem 0 2.5rem', marginTop: '2rem' }}>
             <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
               <div style={{ marginBottom: '3rem' }}>
                 <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>

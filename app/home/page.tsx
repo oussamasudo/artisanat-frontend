@@ -233,7 +233,7 @@ export default function HomePage() {
           --muted: #8C7355;
         }
 
-        /* ── DARK MODE (ajout) ── */
+        /* ── DARK MODE ── */
         .dm {
           --cream: #100C06;
           --sand: #1A1208;
@@ -243,11 +243,12 @@ export default function HomePage() {
         }
         .dm .craft-card { background: #1E1409 !important; }
         .dm .craft-card:hover .craft-desc { color: #F5EDD8 !important; }
-        .dm .testi-nav-btn { 
-        background: #1E1409 !important;
-        border-color: rgba(184,136,42,0.4) !important;
-        color: rgba(255,255,255,0.6) !important;
-      }        .dm .nav-link { color: #A89070 !important; }
+        .dm .testi-nav-btn {
+          background: #1E1409 !important;
+          border-color: rgba(184,136,42,0.4) !important;
+          color: rgba(255,255,255,0.6) !important;
+        }
+        .dm .nav-link { color: #A89070 !important; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; font-size: 18px; }
@@ -296,14 +297,12 @@ export default function HomePage() {
         .stats-item:last-child { border-right: none; }
         .stats-item:first-child { padding-left: 0; }
 
-        /* Timeline line pulse */
         @keyframes pulseDot {
           0%, 100% { box-shadow: 0 0 0 0 rgba(196,98,45,0.4); }
           50% { box-shadow: 0 0 0 8px rgba(196,98,45,0); }
         }
         .timeline-dot-active { animation: pulseDot 2s ease-in-out infinite; }
 
-        /* Testimonial card */
         .testi-nav-btn {
           width: 44px; height: 44px;
           border-radius: 50%;
@@ -317,7 +316,6 @@ export default function HomePage() {
         .testi-nav-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: rgba(196,98,45,0.04); }
 
         @media (max-width: 768px) {
-          /* ── Général ── */
           nav { display: none; }
           header > div > div { flex-direction: column; align-items: flex-start; gap: 1rem; }
           header .btn-primary { width: 100%; justify-content: center; }
@@ -326,9 +324,7 @@ export default function HomePage() {
           section { padding: 3rem 1rem !important; }
           h2 { font-size: 2.2rem !important; }
 
-          /* ── Timeline : colonne verticale avec ligne à gauche ── */
           .timeline-center-line { display: none !important; }
-
           .timeline-grid {
             display: flex !important;
             flex-direction: column !important;
@@ -336,14 +332,12 @@ export default function HomePage() {
             border-left: 2px solid rgba(184,136,42,0.4) !important;
             gap: 0 !important;
           }
-
           .timeline-row {
             display: block !important;
             position: relative !important;
             min-height: unset !important;
             margin-bottom: 1rem !important;
           }
-
           .timeline-row::before {
             content: '';
             position: absolute;
@@ -356,9 +350,7 @@ export default function HomePage() {
             border: 2px solid white;
             box-shadow: 0 0 0 3px rgba(184,136,42,0.2);
           }
-
           .timeline-cell-dot { display: none !important; }
-
           .timeline-cell-left,
           .timeline-cell-right {
             display: block !important;
@@ -367,7 +359,6 @@ export default function HomePage() {
             text-align: left !important;
           }
 
-          /* ── Témoignages ── */
           .testi-card { padding: 1.6rem 1.2rem !important; }
           .testi-quote-icon { display: none !important; }
           .testi-text { font-size: 1rem !important; line-height: 1.7 !important; margin-bottom: 1.4rem !important; }
@@ -377,14 +368,12 @@ export default function HomePage() {
         }
       `}</style>
 
-      {/* classe "dm" appliquée sur le wrapper racine quand dark=true */}
       <div className={dark ? 'dm' : ''} style={{ minHeight: '100vh', background: 'var(--cream)', color: 'var(--ink)', transition: 'background 0.3s, color 0.3s' }}>
-        {/* Custom cursor — desktop only */}
         {!isMobile && <CustomCursor />}
 
-        {/* TOP BAR */}
+        {/* TOP BAR — fond fixe sombre */}
         {!isMobile && (
-          <div style={{ background: 'var(--ink)', padding: '9px 0', textAlign: 'center' }}>
+          <div style={{ background: '#1A1208', padding: '9px 0', textAlign: 'center' }}>
             <p style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
               ✦ Préservation du patrimoine artisanal marocain par l'intelligence artificielle ✦
             </p>
@@ -395,7 +384,7 @@ export default function HomePage() {
         <header style={{ background: dark ? '#1A1208' : 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50, transition: 'background 0.3s' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0' }}>
-              {/* Logo — inchangé */}
+              {/* Logo */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
                   <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
@@ -406,7 +395,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Nav — desktop only — inchangé */}
+              {/* Nav — desktop only */}
               {!isMobile && (
                 <nav style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
                   <a href="#" className="nav-link">Accueil</a>
@@ -416,13 +405,29 @@ export default function HomePage() {
                 </nav>
               )}
 
-              {/* CTA + toggle dark mode (ajout du toggle uniquement) */}
+              {/* ✅ MODIFICATION : CTA en premier, dark mode à l'extrême droite */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
 
-                {/* ── BOUTON DARK MODE ── */}
+                {/* CTA — EN PREMIER */}
+                <button
+                  className="btn-primary"
+                  onClick={() => router.push('/classifier')}
+                  style={{
+                    padding: isMobile ? '0.75rem 1rem' : '0.85rem 2rem',
+                    borderRadius: 2,
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    fontSize: isMobile ? '0.72rem' : '0.85rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
+                  <ArrowRight size={14} />
+                </button>
+
+                {/* ── BOUTON DARK MODE — EXTRÊME DROITE ── */}
                 <motion.button
                   whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
-                  onClick={toggleDark} 
+                  onClick={toggleDark}
                   title={dark ? 'Mode clair' : 'Mode sombre'}
                   style={{
                     width: 38, height: 38, borderRadius: 2, flexShrink: 0,
@@ -444,27 +449,12 @@ export default function HomePage() {
                   </AnimatePresence>
                 </motion.button>
 
-                {/* CTA — inchangé */}
-                <button
-                  className="btn-primary"
-                  onClick={() => router.push('/classifier')}
-                  style={{
-                    padding: isMobile ? '0.75rem 1rem' : '0.85rem 2rem',
-                    borderRadius: 2,
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    fontSize: isMobile ? '0.72rem' : '0.85rem',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
-                  <ArrowRight size={14} />
-                </button>
               </div>
             </div>
           </div>
         </header>
 
-        {/* HERO — inchangé sauf le gradient de fond qui suit dark */}
+        {/* HERO */}
         <section style={{ position: 'relative', overflow: 'hidden', minHeight: '90vh', display: 'flex', alignItems: 'center' }}>
           <div className="zellige-bg pattern-overlay" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: `linear-gradient(to top, ${dark ? '#100C06' : 'var(--cream)'}, transparent)`, zIndex: 1, transition: 'background 0.3s' }} />
@@ -507,8 +497,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* STATS BAR — inchangé */}
-        <div style={{ background: 'var(--ink)', padding: '3rem 0' }}>
+        {/* ✅ MODIFICATION : STATS BAR — fond fixe sombre */}
+        <div style={{ background: dark ? '#0A0704' : '#1A1208', padding: '3rem 0' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div className="stats-container" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
               {[
@@ -565,9 +555,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════════════
-            TIMELINE HISTORIQUE
-        ═══════════════════════════════════════════════ */}
+        {/* TIMELINE */}
         <section id="timeline" style={{ padding: '8rem 0', background: dark ? '#100C06' : 'white', overflow: 'hidden', transition: 'background 0.3s' }} ref={timelineRef}>
           <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} style={{ textAlign: 'center', marginBottom: '5rem' }}>
@@ -582,11 +570,8 @@ export default function HomePage() {
               </p>
             </motion.div>
 
-            {/* Timeline container */}
             <div style={{ position: 'relative' }}>
-
               {isMobile ? (
-                /* ── MOBILE: vertical list with left border ── */
                 <div style={{
                   paddingLeft: '1.8rem',
                   borderLeft: '2px solid rgba(184,136,42,0.35)',
@@ -600,7 +585,6 @@ export default function HomePage() {
                       transition={{ duration: 0.5, delay: index * 0.15 }}
                       style={{ position: 'relative' }}
                     >
-                      {/* Dot on the left line */}
                       <div style={{
                         position: 'absolute',
                         left: '-2.05rem',
@@ -617,9 +601,7 @@ export default function HomePage() {
                   ))}
                 </div>
               ) : (
-                /* ── DESKTOP: alternating left/right ── */
                 <>
-                  {/* Central vertical line */}
                   <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, transform: 'translateX(-50%)', overflow: 'hidden' }}>
                     <motion.div
                       initial={{ scaleY: 0 }}
@@ -637,11 +619,9 @@ export default function HomePage() {
                         transition={{ duration: 0.7, delay: index * 0.2 }}
                         style={{ display: 'grid', gridTemplateColumns: '1fr 60px 1fr', alignItems: 'center', minHeight: 120 }}
                       >
-                        {/* Left cell */}
                         <div style={{ padding: '1.5rem 2.5rem 1.5rem 0', textAlign: 'right', visibility: item.side === 'left' ? 'visible' : 'hidden' }}>
                           {item.side === 'left' && <TimelineCard item={item} dark={dark} />}
                         </div>
-                        {/* Center dot */}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 2 }}>
                           <div
                             className={item.highlight ? 'timeline-dot-active' : ''}
@@ -661,7 +641,6 @@ export default function HomePage() {
                             <span style={{ transform: item.highlight ? 'rotate(-45deg)' : undefined }}>{item.icon}</span>
                           </div>
                         </div>
-                        {/* Right cell */}
                         <div style={{ padding: '1.5rem 0 1.5rem 2.5rem', textAlign: 'left', visibility: item.side === 'right' ? 'visible' : 'hidden' }}>
                           {item.side === 'right' && <TimelineCard item={item} dark={dark} />}
                         </div>
@@ -722,10 +701,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ═══════════════════════════════════════════════
-            TÉMOIGNAGES — inchangé (fond var(--ink) par design)
-        ═══════════════════════════════════════════════ */}
-          <section style={{ padding: '8rem 0', background: dark ? '#0A0704' : '#1A1208', position: 'relative', overflow: 'hidden' }}>          {/* Decorative background */}
+        {/* ✅ MODIFICATION : TÉMOIGNAGES — fond fixe sombre */}
+        <section style={{ padding: '8rem 0', background: dark ? '#0A0704' : '#1A1208', position: 'relative', overflow: 'hidden' }}>
           <div className="pattern-overlay" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} />
           <div style={{ position: 'absolute', top: '20%', left: '-5%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(196,98,45,0.08) 0%, transparent 70%)' }} />
           <div style={{ position: 'absolute', bottom: '10%', right: '-5%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(184,136,42,0.06) 0%, transparent 70%)' }} />
@@ -740,7 +717,6 @@ export default function HomePage() {
               <div className="gold-divider" style={{ margin: '1.5rem auto', width: 100 }} />
             </motion.div>
 
-            {/* Testimonial carousel */}
             <div style={{ position: 'relative' }}>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -759,19 +735,14 @@ export default function HomePage() {
                     backdropFilter: 'blur(10px)',
                   }}
                 >
-                  {/* Quote mark */}
                   <div className="testi-quote-icon" style={{ position: 'absolute', top: '2rem', right: '2.5rem', opacity: 0.12 }}>
                     <Quote size={64} color="var(--gold)" />
                   </div>
-
-                  {/* Stars */}
                   <div style={{ display: 'flex', gap: 4, marginBottom: '1.8rem' }}>
                     {Array.from({ length: testimonials[activeTestimonial].stars }).map((_, i) => (
                       <span key={i} style={{ color: 'var(--gold-light)', fontSize: '1rem' }}>★</span>
                     ))}
                   </div>
-
-                  {/* Text */}
                   <p
                     className="testi-text"
                     style={{
@@ -787,8 +758,6 @@ export default function HomePage() {
                   >
                     "{testimonials[activeTestimonial].text}"
                   </p>
-
-                  {/* Author */}
                   <div className="testi-author" style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
                     <div style={{
                       width: 48, height: 48,
@@ -824,9 +793,7 @@ export default function HomePage() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Navigation */}
               <div className="testi-nav" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem' }}>
-                {/* Dots */}
                 <div style={{ display: 'flex', gap: 8 }}>
                   {testimonials.map((_, i) => (
                     <button
@@ -843,8 +810,6 @@ export default function HomePage() {
                     />
                   ))}
                 </div>
-
-                {/* Arrow buttons */}
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button onClick={prev} className="testi-nav-btn">
                     <ChevronLeft size={17} />
@@ -856,14 +821,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Testimonial count */}
             <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.75rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', fontFamily: 'Jost' }}>
               {activeTestimonial + 1} / {testimonials.length}
             </p>
           </div>
         </section>
 
-        {/* CTA SECTION — inchangé */}
+        {/* CTA SECTION */}
         <section style={{ position: 'relative', overflow: 'hidden' }}>
           <div className="zellige-bg pattern-overlay" style={{ position: 'absolute', inset: 0 }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '8rem 2rem', textAlign: 'center' }}>
@@ -884,8 +848,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* FOOTER — inchangé */}
-          <footer style={{ background: dark ? '#0A0704' : '#1A1208', color: 'white', padding: '5rem 0 2.5rem' }}>          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
+        {/* ✅ MODIFICATION : FOOTER — fond fixe sombre */}
+        <footer style={{ background: dark ? '#0A0704' : '#1A1208', color: 'white', padding: '5rem 0 2.5rem' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1.2rem' }}>
@@ -928,7 +893,7 @@ export default function HomePage() {
   )
 }
 
-// ── Sub-component: Timeline card — prop dark ajoutée ─────────────────────────
+// ── Sub-component: Timeline card ─────────────────────────────────────────────
 function TimelineCard({ item, dark }: { item: { century: string; year: string; title: string; desc: string; highlight?: boolean }; dark: boolean }) {
   return (
     <motion.div

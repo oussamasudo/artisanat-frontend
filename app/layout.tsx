@@ -17,10 +17,15 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
-  title: 'Artisanat Classifié - Classification Marocaine',
+  title: 'Artisanat Classifié - Heritage',
   description: 'Classifiez les artisanats marocains avec l\'IA: babouche, bijoux, poterie, tapis, zellige',
   viewport: 'width=device-width, initial-scale=1',
   themeColor: '#c9302c',
+  icons: {
+  icon: '/favicon.ico',
+  shortcut: '/favicon.ico',
+  apple: '/apple-touch-icon.png',
+}
 }
 
 export default function RootLayout({
@@ -30,7 +35,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={`${playfairDisplay.variable} ${outfit.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${playfairDisplay.variable} ${outfit.variable} font-sans antialiased`}>
+        {children}
+      </body>
     </html>
   )
 }
