@@ -317,8 +317,8 @@ export default function HomePage() {
 
         @media (max-width: 768px) {
           nav { display: none; }
-          header > div > div { flex-direction: column; align-items: flex-start; gap: 1rem; }
-          header .btn-primary { width: 100%; justify-content: center; }
+          header > div > div { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: 0.5rem !important; }
+          header .btn-primary { width: auto !important; justify-content: center; }
           .stats-container { flex-direction: column; }
           .stats-item { border-right: none; border-bottom: 1px solid rgba(184,136,42,0.2); padding: 1.5rem 0; }
           section { padding: 3rem 1rem !important; }
