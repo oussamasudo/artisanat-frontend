@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   await resend.emails.send({
     from: 'Heritage AI <onboarding@resend.dev>',
-    to: 'oussamahafdoune6@gmail.com',  // ← votre email ici
+    to: 'oussamahafdoune6@gmail.com',  
     subject: '✦ Nouvelle remarque — Heritage AI',
     html: `
       <h2>Nouvelle remarque reçue</h2>
