@@ -515,34 +515,54 @@ export default function ClassifierPage() {
           </div>
 
           {/* ✅ HEADER MOBILE FIXED */}
+          {/* HEADER — disposition sketch, mobile-first */}
           <motion.header animate={{ backgroundColor: dark ? '#1A1208' : '#ffffff' }} transition={{ duration: 0.35 }}
-            style={{ borderBottom: `1px solid ${cardBorder}`, position: 'sticky', top: 0, zIndex: 50 }}>
-            <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 0', flexWrap: 'nowrap', gap: '0.5rem' }}>
+  style={{ borderBottom: `1px solid ${cardBorder}`, position: 'sticky', top: 0, zIndex: 50, width: '100%', overflow: 'hidden' }}>
+  <div style={{ padding: '0 1rem' }}>
 
-                {/* Logo */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                  <div style={{ width: 34, height: 34, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
-                    <span style={{ color: 'white', fontSize: '0.9rem' }}>◆</span>
-                  </div>
-                  <div>
-                    <h1 style={{ fontSize: '1.3rem', fontWeight: 600, color: headingColor, lineHeight: 1, fontFamily: 'Cormorant Garamond, serif', whiteSpace: 'nowrap' }}>Heritage AI</h1>
-                    <p style={{ fontSize: '0.55rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Classificateur</p>
-                  </div>
-                </div>
+    {/* LIGNE 1 : Logo */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.7rem 0 0.5rem' }}>
+      <div style={{ width: 32, height: 32, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
+        <span style={{ color: 'white', fontSize: '0.85rem' }}>◆</span>
+      </div>
+      <div>
+        <h1 style={{ fontSize: '1.2rem', fontWeight: 600, color: headingColor, lineHeight: 1, fontFamily: 'Cormorant Garamond, serif', whiteSpace: 'nowrap' }}>Heritage AI</h1>
+        <p style={{ fontSize: '0.55rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Classificateur</p>
+      </div>
+    </div>
 
-                {/* ✅ Droite : Compteur → Retour → Dark mode — tout sur une ligne */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'nowrap', flexShrink: 0 }}>
-                  <ClassificationCounter count={classificationCount} dark={dark} />
-                  <Link href="/" className="nav-link" style={{ color: dark ? 'rgba(255,255,255,0.5)' : 'var(--muted)', fontSize: '0.65rem' }}>
-                    <ArrowLeft size={13} />Accueil
-                  </Link>
-                  <DarkModeToggle dark={dark} onToggle={toggleDark} />
-                </div>
+    {/* LIGNE 2 : Compteur + Accueil */}
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0 0.7rem', borderTop: `1px solid ${dark ? 'rgba(184,136,42,0.15)' : 'rgba(184,136,42,0.1)'}`, gap: '0.5rem' }}>
+      
+      {/* Compteur — prend l'espace disponible */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: dark ? 'rgba(255,255,255,0.06)' : 'white', border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`, borderRadius: 2, padding: '0.4rem 0.8rem', flex: 1, minWidth: 0 }}>
+        <motion.span key={classificationCount} initial={{ scale: 1.4, color: '#C4622D' }} animate={{ scale: 1, color: '#B8882A' }} transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+          style={{ fontSize: '1rem', fontFamily: 'Cormorant Garamond, serif', fontWeight: 700, color: 'var(--gold)', flexShrink: 0 }}>
+          {classificationCount}
+        </motion.span>
+        <span style={{ fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif', fontWeight: 500, lineHeight: 1.3, whiteSpace: 'nowrap' }}>
+          Classifications<br />effectuées
+        </span>
+      </div>
 
-              </div>
-            </div>
+      {/* Bouton Accueil — taille fixe */}
+      <Link href="/" className="nav-link" style={{ 
+        color: dark ? 'rgba(255,255,255,0.6)' : 'var(--muted)', 
+        background: dark ? 'rgba(255,255,255,0.06)' : 'var(--sand)', 
+        border: `1px solid ${dark ? 'rgba(184,136,42,0.3)' : 'rgba(184,136,42,0.25)'}`, 
+        padding: '0.4rem 0.9rem', 
+        borderRadius: 2,
+        fontSize: '0.72rem',
+        flexShrink: 0,
+        whiteSpace: 'nowrap'
+      }}>
+        <ArrowLeft size={13} />Accueil
+      </Link>
+
+    </div>
+  </div>
           </motion.header>
+
 
           {/* HERO */}
           <div style={{ position: 'relative', overflow: 'hidden' }}>
