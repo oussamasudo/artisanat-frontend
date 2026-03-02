@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {   
   const { email, message } = await req.json()
 
   await resend.emails.send({
