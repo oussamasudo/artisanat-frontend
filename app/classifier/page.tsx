@@ -82,39 +82,36 @@ const craftGallery: Record<string, string[]> = {
   ],
 }
 
-// ─── Classification Counter ───────────────────────────────────────────────────
 function ClassificationCounter({ count, dark }: { count: number; dark: boolean }) {
   return (
     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-      style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: dark ? 'rgba(255,255,255,0.06)' : 'white', border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`, borderRadius: 2, padding: '0.5rem 1rem' }}>
+      style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: dark ? 'rgba(255,255,255,0.06)' : 'white', border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`, borderRadius: 2, padding: '0.4rem 0.7rem' }}>
       <motion.span key={count} initial={{ scale: 1.4, color: '#C4622D' }} animate={{ scale: 1, color: '#B8882A' }} transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-        style={{ fontSize: '1.15rem', fontFamily: 'Cormorant Garamond, serif', fontWeight: 700, color: 'var(--gold)', minWidth: '1.4rem', textAlign: 'center' }}>
+        style={{ fontSize: '1rem', fontFamily: 'Cormorant Garamond, serif', fontWeight: 700, color: 'var(--gold)', minWidth: '1rem', textAlign: 'center' }}>
         {count}
       </motion.span>
-      <span style={{ fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif', fontWeight: 500, lineHeight: 1.3 }}>
-        Classification{count !== 1 ? 's' : ''}<br />effectuée{count !== 1 ? 's' : ''}
+      <span style={{ fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif', fontWeight: 500, lineHeight: 1.3 }}>
+        Classifications<br />effectuées
       </span>
     </motion.div>
   )
 }
 
-// ─── Dark Mode Toggle ─────────────────────────────────────────────────────────
 function DarkModeToggle({ dark, onToggle }: { dark: boolean; onToggle: () => void }) {
   return (
     <motion.button whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }} onClick={onToggle}
       title={dark ? 'Mode clair' : 'Mode sombre'}
-      style={{ width: 38, height: 38, borderRadius: 2, background: dark ? 'rgba(255,255,255,0.08)' : 'var(--sand)', border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.25s' }}>
+      style={{ width: 34, height: 34, borderRadius: 2, background: dark ? 'rgba(255,255,255,0.08)' : 'var(--sand)', border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.25s', flexShrink: 0 }}>
       <AnimatePresence mode="wait">
         {dark
-          ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}><Sun size={17} color="var(--gold)" /></motion.div>
-          : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}><Moon size={17} color="var(--muted)" /></motion.div>
+          ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}><Sun size={15} color="var(--gold)" /></motion.div>
+          : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}><Moon size={15} color="var(--muted)" /></motion.div>
         }
       </AnimatePresence>
     </motion.button>
   )
 }
 
-// ─── Share + Download Bar ─────────────────────────────────────────────────────
 function ShareDownloadBar({ result, preview, dark }: { result: PredictionResult; preview: string | null; dark: boolean }) {
   const [copied, setCopied] = useState(false)
   const [downloading, setDownloading] = useState(false)
@@ -136,31 +133,24 @@ function ShareDownloadBar({ result, preview, dark }: { result: PredictionResult;
       const canvas = document.createElement('canvas')
       canvas.width = 800; canvas.height = 500
       const ctx = canvas.getContext('2d')!
-
       ctx.fillStyle = dark ? '#100C06' : '#FAF6EE'
       ctx.fillRect(0, 0, 800, 500)
-
       ctx.fillStyle = '#C4622D'
       ctx.fillRect(0, 0, 800, 140)
       ctx.fillStyle = 'rgba(255,255,255,0.05)'
       for (let x = 0; x < 800; x += 30) for (let y = 0; y < 140; y += 30) { ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill() }
-
       const img = new Image(); img.crossOrigin = 'anonymous'
       await new Promise<void>((res) => { img.onload = () => res(); img.onerror = () => res(); img.src = preview })
       ctx.save(); ctx.beginPath(); (ctx as any).roundRect?.(30, 30, 200, 200, 8) ?? ctx.rect(30, 30, 200, 200); ctx.clip(); ctx.drawImage(img, 30, 30, 200, 200); ctx.restore()
-
       ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 34px Georgia, serif'
       ctx.fillText(`${craftIcons[result.class]} ${craftNames[result.class]}`, 250, 80)
       ctx.fillStyle = 'rgba(255,255,255,0.72)'; ctx.font = '16px Arial'
       ctx.fillText(`📍 ${craftRegions[result.class]}  ·  ${craftHeritage[result.class]}`, 252, 112)
-
       ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fillRect(252, 122, 210, 34)
       ctx.fillStyle = '#fff'; ctx.font = 'bold 18px Georgia, serif'
       ctx.fillText(`Confiance : ${(result.confidence * 100).toFixed(1)}%`, 262, 146)
-
       ctx.strokeStyle = 'rgba(184,136,42,0.35)'; ctx.lineWidth = 1
       ctx.beginPath(); ctx.moveTo(30, 258); ctx.lineTo(770, 258); ctx.stroke()
-
       const top3 = result.top3 ?? [{ class: result.class, confidence: result.confidence }]
       top3.forEach((item, i) => {
         const y = 288 + i * 58
@@ -173,10 +163,8 @@ function ShareDownloadBar({ result, preview, dark }: { result: PredictionResult;
         ctx.fillStyle = i === 0 ? '#C4622D' : 'rgba(184,136,42,0.4)'
         ctx.fillRect(30, y + 7, item.confidence * 500, i === 0 ? 9 : 6)
       })
-
       ctx.fillStyle = 'rgba(184,136,42,0.55)'; ctx.font = '12px Arial'
       ctx.fillText('✦ Heritage AI — Classificateur d\'Artisanat Marocain', 30, 480)
-
       const link = document.createElement('a')
       link.download = `heritage-ai-${craftNames[result.class].toLowerCase().replace(/\s+/g, '-')}.png`
       link.href = canvas.toDataURL('image/png'); link.click()
@@ -207,7 +195,6 @@ function ShareDownloadBar({ result, preview, dark }: { result: PredictionResult;
   )
 }
 
-// ─── Morocco Map — Leaflet ────────────────────────────────────────────────────
 function MoroccoMap({ activeCraft, dark }: { activeCraft: string | null; dark: boolean }) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
@@ -259,7 +246,6 @@ function MoroccoMap({ activeCraft, dark }: { activeCraft: string | null; dark: b
   return <div ref={mapRef} style={{ width: '100%', height: '280px', borderRadius: 4, overflow: 'hidden', border: `1px solid ${dark ? 'rgba(184,136,42,0.3)' : 'rgba(184,136,42,0.2)'}` }} />
 }
 
-// ─── Top 3 Bars ───────────────────────────────────────────────────────────────
 function Top3Bars({ top3, dark }: { top3: { class: string; confidence: number }[]; dark: boolean }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
@@ -289,7 +275,6 @@ function Top3Bars({ top3, dark }: { top3: { class: string; confidence: number }[
   )
 }
 
-// ─── Gallery Section ──────────────────────────────────────────────────────────
 function CraftGallery({ onImageSelect, dark }: { onImageSelect: (url: string) => void; dark: boolean }) {
   const [activeTab, setActiveTab] = useState<string>('babouche')
   return (
@@ -320,7 +305,6 @@ function CraftGallery({ onImageSelect, dark }: { onImageSelect: (url: string) =>
   )
 }
 
-// ─── Custom Cursor ────────────────────────────────────────────────────────────
 function ClassifierCursor() {
   const [pos, setPos] = useState({ x: -100, y: -100 })
   const [isHovering, setIsHovering] = useState(false)
@@ -350,7 +334,6 @@ function ClassifierCursor() {
   )
 }
 
-// ─── Feedback Form ────────────────────────────────────────────────────────────
 function FeedbackForm() {
   const [message, setMessage] = useState('')
   const [email, setEmail] = useState('')
@@ -390,7 +373,6 @@ function FeedbackForm() {
   )
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function ClassifierPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
@@ -401,7 +383,7 @@ export default function ClassifierPage() {
   const [showGallery, setShowGallery] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [classificationCount, setClassificationCount] = useState(0)
-  const { dark, toggle: toggleDark } = useDarkMode() 
+  const { dark, toggle: toggleDark } = useDarkMode()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -501,12 +483,16 @@ export default function ClassifierPage() {
         .btn-ghost { background: transparent; border: 1px solid rgba(184,136,42,0.25); cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'Jost', sans-serif; font-weight: 400; font-size: 0.8rem; }
         .btn-ghost:hover { border-color: var(--terracotta); color: var(--terracotta); }
         .section-label { font-size: 0.78rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); font-weight: 500; display: block; }
-        .nav-link { font-size: 0.82rem; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: color 0.2s; font-family: 'Jost', sans-serif; display: flex; align-items: center; gap: 6px; }
+        .nav-link { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: color 0.2s; font-family: 'Jost', sans-serif; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
         .nav-link:hover { color: var(--terracotta) !important; }
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
         .shimmer-text { background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 40%, #F5D78A 50%, var(--gold-light) 60%, var(--gold) 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @media (max-width: 768px) { h2 { font-size: 2rem !important; } main > div { grid-template-columns: 1fr !important; } .btn-primary, .btn-ghost { width: 100%; } .upload-zone { padding: 2rem 1rem !important; } }
+        @media (max-width: 768px) {
+          h2 { font-size: 2rem !important; }
+          main > div { grid-template-columns: 1fr !important; }
+          .upload-zone { padding: 2rem 1rem !important; }
+        }
       `}</style>
 
       <motion.div animate={{ backgroundColor: pageBg }} transition={{ duration: 0.35 }} style={{ minHeight: '100vh', position: 'relative' }}>
@@ -521,37 +507,39 @@ export default function ClassifierPage() {
 
         <div style={{ position: 'relative', zIndex: 1 }}>
 
-          {/* ✅ TOP BAR — fond fixe sombre */}
+          {/* TOP BAR */}
           <div style={{ background: '#1A1208', padding: '9px 0', textAlign: 'center' }}>
             <p style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
               ✦ Classificateur d'Artisanat Marocain — Propulsé par Deep Learning ✦
             </p>
           </div>
 
-          {/* ✅ HEADER — dark mode à l'extrême droite */}
+          {/* ✅ HEADER MOBILE FIXED */}
           <motion.header animate={{ backgroundColor: dark ? '#1A1208' : '#ffffff' }} transition={{ duration: 0.35 }}
             style={{ borderBottom: `1px solid ${cardBorder}`, position: 'sticky', top: 0, zIndex: 50 }}>
-            <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 0', flexWrap: 'wrap', gap: '0.8rem' }}>
+            <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 0', flexWrap: 'nowrap', gap: '0.5rem' }}>
+
                 {/* Logo */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2 }}>
-                    <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                  <div style={{ width: 34, height: 34, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
+                    <span style={{ color: 'white', fontSize: '0.9rem' }}>◆</span>
                   </div>
                   <div>
-                    <h1 style={{ fontSize: '1.6rem', fontWeight: 600, color: headingColor, lineHeight: 1, fontFamily: 'Cormorant Garamond, serif' }}>Heritage AI</h1>
-                    <p style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Classificateur</p>
+                    <h1 style={{ fontSize: '1.3rem', fontWeight: 600, color: headingColor, lineHeight: 1, fontFamily: 'Cormorant Garamond, serif', whiteSpace: 'nowrap' }}>Heritage AI</h1>
+                    <p style={{ fontSize: '0.55rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Classificateur</p>
                   </div>
                 </div>
 
-                {/* ✅ Ordre : Compteur → Retour → Dark mode à l'extrême droite */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                {/* ✅ Droite : Compteur → Retour → Dark mode — tout sur une ligne */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'nowrap', flexShrink: 0 }}>
                   <ClassificationCounter count={classificationCount} dark={dark} />
-                  <Link href="/" className="nav-link" style={{ color: dark ? 'rgba(255,255,255,0.5)' : 'var(--muted)' }}>
-                    <ArrowLeft size={15} />Retour à l'accueil
+                  <Link href="/" className="nav-link" style={{ color: dark ? 'rgba(255,255,255,0.5)' : 'var(--muted)', fontSize: '0.65rem' }}>
+                    <ArrowLeft size={13} />Accueil
                   </Link>
                   <DarkModeToggle dark={dark} onToggle={toggleDark} />
                 </div>
+
               </div>
             </div>
           </motion.header>
@@ -752,7 +740,7 @@ export default function ClassifierPage() {
             </div>
           </main>
 
-          {/* ✅ FOOTER — fond fixe sombre */}
+          {/* ✅ FOOTER MOBILE FIXED */}
           <footer style={{ background: dark ? '#0A0704' : '#1A1208', color: 'white', padding: '3.5rem 0 2.5rem', marginTop: '2rem' }}>
             <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
               <div style={{ marginBottom: '3rem' }}>
@@ -764,14 +752,16 @@ export default function ClassifierPage() {
                 <FeedbackForm />
               </div>
               <div className="gold-divider" style={{ marginBottom: '1.5rem' }} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 30, height: 30, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2 }}>
+
+              {/* ✅ Footer bottom — flex-wrap pour mobile */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                  <div style={{ width: 30, height: 30, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
                     <span style={{ color: 'white', fontSize: '0.75rem' }}>◆</span>
                   </div>
-                  <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', fontWeight: 600 }}>Heritage AI</span>
+                  <span style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', fontWeight: 600, whiteSpace: 'nowrap' }}>Heritage AI</span>
                 </div>
-                <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'Jost, sans-serif' }}>© 2026 Heritage AI — Tous droits réservés</p>
+                <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'Jost, sans-serif', whiteSpace: 'nowrap' }}>© 2026 Heritage AI — Tous droits réservés</p>
               </div>
             </div>
           </footer>
