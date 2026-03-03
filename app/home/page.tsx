@@ -5,7 +5,8 @@ import Image from 'next/image'
 import { ArrowRight, Sparkles, Quote, ChevronLeft, ChevronRight, Moon, Sun } from 'lucide-react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-import { useDarkMode } from '@/hooks/useDarkMode' 
+import { useDarkMode } from '@/hooks/useDarkMode'
+
 // ── Hook mobile ───────────────────────────────────────────────────────────────
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(false)
@@ -112,10 +113,7 @@ export default function HomePage() {
   const timelineRef = useRef(null)
   const isTimelineInView = useInView(timelineRef, { once: true, margin: '-100px' })
   const [activeTestimonial, setActiveTestimonial] = useState(0)
-
-  // ── DARK MODE ─────────────────────────────────────────────────────────────
-  const { dark, toggle: toggleDark } = useDarkMode()  
-  // ─────────────────────────────────────────────────────────────────────────
+  const { dark, toggle: toggleDark } = useDarkMode()
 
   const crafts = [
     { name: 'Babouche', desc: 'Chaussure traditionnelle emblématique du Maroc, portée depuis des siècles dans les médinas.', heritage: '10+ siècles', icon: '🥿' },
@@ -126,39 +124,39 @@ export default function HomePage() {
   ]
 
   const testimonials = [
-  {
-    name: 'SM le Roi Mohammed VI',
-    role: 'Roi du Maroc',
-    avatar: 'M',
-    text: "« L'artisanat marocain constitue un pilier fondamental de notre patrimoine culturel et un levier essentiel du développement économique et social. »",
-    craft: 'Artisanat marocain',
-    stars: 5,
-  },
-  {
-    name: 'Ministère du Tourisme du Maroc',
-    role: 'Institution officielle',
-    avatar: 'T',
-    text: "« L'artisanat est l'ambassadeur de la culture marocaine à travers le monde et un secteur clé pour la valorisation de notre identité nationale. »",
-    craft: 'Patrimoine',
-    stars: 5,
-  },
-  {
-    name: 'Amina Bensouda',
-    role: "Professeure d'histoire de l'art, Rabat",
-    avatar: 'A',
-    text: "Heritage AI représente un pont remarquable entre la technologie moderne et le patrimoine artisanal marocain. C'est un outil pédagogique puissant.",
-    craft: 'Poterie',
-    stars: 5,
-  },
-  {
-    name: 'Karim Tazi',
-    role: 'Artisan maroquinier, Marrakech',
-    avatar: 'K',
-    text: "Grâce à Heritage AI, notre savoir-faire ancestral est reconnu, documenté et valorisé. C'est une fierté pour nous, artisans.",
-    craft: 'Babouche',
-    stars: 5,
-  },
-];
+    {
+      name: 'SM le Roi Mohammed VI',
+      role: 'Roi du Maroc',
+      avatar: 'M',
+      text: "« L'artisanat marocain constitue un pilier fondamental de notre patrimoine culturel et un levier essentiel du développement économique et social. »",
+      craft: 'Artisanat marocain',
+      stars: 5,
+    },
+    {
+      name: 'Ministère du Tourisme du Maroc',
+      role: 'Institution officielle',
+      avatar: 'T',
+      text: "« L'artisanat est l'ambassadeur de la culture marocaine à travers le monde et un secteur clé pour la valorisation de notre identité nationale. »",
+      craft: 'Patrimoine',
+      stars: 5,
+    },
+    {
+      name: 'Amina Bensouda',
+      role: "Professeure d'histoire de l'art, Rabat",
+      avatar: 'A',
+      text: "Heritage AI représente un pont remarquable entre la technologie moderne et le patrimoine artisanal marocain. C'est un outil pédagogique puissant.",
+      craft: 'Poterie',
+      stars: 5,
+    },
+    {
+      name: 'Karim Tazi',
+      role: 'Artisan maroquinier, Marrakech',
+      avatar: 'K',
+      text: "Grâce à Heritage AI, notre savoir-faire ancestral est reconnu, documenté et valorisé. C'est une fierté pour nous, artisans.",
+      craft: 'Babouche',
+      stars: 5,
+    },
+  ]
 
   const timeline = [
     {
@@ -173,7 +171,7 @@ export default function HomePage() {
       century: 'XIe siècle',
       year: '~1050',
       title: 'Poterie de Safi',
-      desc: 'Safi devient le centre névralgique de la poterie marocaine. Les techniques de cuisson et d\'émaillage atteignent une perfection remarquable.',
+      desc: "Safi devient le centre névralgique de la poterie marocaine. Les techniques de cuisson et d'émaillage atteignent une perfection remarquable.",
       icon: '🏺',
       side: 'right',
     },
@@ -181,14 +179,14 @@ export default function HomePage() {
       century: 'XIIe siècle',
       year: '~1150',
       title: 'Tapis Berbères',
-      desc: 'Les femmes berbères de l\'Atlas codifient les motifs géométriques dans leurs tissages, chaque symbole portant une signification spirituelle.',
+      desc: "Les femmes berbères de l'Atlas codifient les motifs géométriques dans leurs tissages, chaque symbole portant une signification spirituelle.",
       icon: '🧵',
       side: 'left',
     },
     {
       century: 'XIIIe siècle',
       year: '~1250',
-      title: 'Bijoux de l\'Atlas',
+      title: "Bijoux de l'Atlas",
       desc: "Les orfèvres berbères développent des techniques d'argenterie uniques. Les fibules et colliers deviennent marqueurs d'identité tribale.",
       icon: '💎',
       side: 'right',
@@ -202,7 +200,7 @@ export default function HomePage() {
       side: 'left',
     },
     {
-      century: 'Aujourd\'hui',
+      century: "Aujourd'hui",
       year: '2026',
       title: 'Heritage AI',
       desc: "L'intelligence artificielle au service du patrimoine : chaque artisanat reconnu, chaque tradition préservée pour les générations futures.",
@@ -233,7 +231,6 @@ export default function HomePage() {
           --muted: #8C7355;
         }
 
-        /* ── DARK MODE ── */
         .dm {
           --cream: #100C06;
           --sand: #1A1208;
@@ -316,49 +313,10 @@ export default function HomePage() {
         .testi-nav-btn:hover { border-color: var(--terracotta); color: var(--terracotta); background: rgba(196,98,45,0.04); }
 
         @media (max-width: 768px) {
-          nav { display: none; }
-          header > div > div { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: 0.5rem !important; }
-          header .btn-primary { width: auto !important; justify-content: center; }
           .stats-container { flex-direction: column; }
           .stats-item { border-right: none; border-bottom: 1px solid rgba(184,136,42,0.2); padding: 1.5rem 0; }
           section { padding: 3rem 1rem !important; }
           h2 { font-size: 2.2rem !important; }
-
-          .timeline-center-line { display: none !important; }
-          .timeline-grid {
-            display: flex !important;
-            flex-direction: column !important;
-            padding-left: 1.5rem !important;
-            border-left: 2px solid rgba(184,136,42,0.4) !important;
-            gap: 0 !important;
-          }
-          .timeline-row {
-            display: block !important;
-            position: relative !important;
-            min-height: unset !important;
-            margin-bottom: 1rem !important;
-          }
-          .timeline-row::before {
-            content: '';
-            position: absolute;
-            left: -2.1rem;
-            top: 1.4rem;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--gold);
-            border: 2px solid white;
-            box-shadow: 0 0 0 3px rgba(184,136,42,0.2);
-          }
-          .timeline-cell-dot { display: none !important; }
-          .timeline-cell-left,
-          .timeline-cell-right {
-            display: block !important;
-            visibility: visible !important;
-            padding: 0 0 0 0.5rem !important;
-            text-align: left !important;
-          }
-
           .testi-card { padding: 1.6rem 1.2rem !important; }
           .testi-quote-icon { display: none !important; }
           .testi-text { font-size: 1rem !important; line-height: 1.7 !important; margin-bottom: 1.4rem !important; }
@@ -371,7 +329,7 @@ export default function HomePage() {
       <div className={dark ? 'dm' : ''} style={{ minHeight: '100vh', background: 'var(--cream)', color: 'var(--ink)', transition: 'background 0.3s, color 0.3s' }}>
         {!isMobile && <CustomCursor />}
 
-        {/* TOP BAR — fond fixe sombre */}
+        {/* TOP BAR */}
         {!isMobile && (
           <div style={{ background: '#1A1208', padding: '9px 0', textAlign: 'center' }}>
             <p style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold-light)', fontFamily: 'Jost, sans-serif', fontWeight: 300 }}>
@@ -381,82 +339,80 @@ export default function HomePage() {
         )}
 
         {/* HEADER */}
-       {/* HEADER */}
-<header style={{ background: dark ? '#1A1208' : 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50, transition: 'background 0.3s' }}>
-  <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
+        <header style={{ background: dark ? '#1A1208' : 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50, transition: 'background 0.3s' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
 
-    {/* LIGNE 1 : Logo centré */}
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '0.9rem 0 0.5rem' }}>
-      <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
-        <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
-      </div>
-      <div>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1, fontFamily: 'Cormorant Garamond, serif' }}>Heritage AI</h1>
-        <p style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Artisanat Marocain</p>
-      </div>
-    </div>
+            {/* LIGNE 1 : Logo centré */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '0.9rem 0 0.5rem' }}>
+              <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
+                <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
+              </div>
+              <div>
+                <h1 style={{ fontSize: '1.6rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1, fontFamily: 'Cormorant Garamond, serif' }}>Heritage AI</h1>
+                <p style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Artisanat Marocain</p>
+              </div>
+            </div>
 
-    {/* LIGNE 2 : Nav (desktop) + CTA + Dark mode */}
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0 0.9rem', borderTop: `1px solid ${dark ? 'rgba(184,136,42,0.15)' : 'rgba(184,136,42,0.1)'}` }}>
+            {/* LIGNE 2 : Nav + CTA + Dark mode */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0 0.9rem', borderTop: `1px solid ${dark ? 'rgba(184,136,42,0.15)' : 'rgba(184,136,42,0.1)'}` }}>
 
-      {/* Nav desktop */}
-      {!isMobile && (
-        <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <a href="#" className="nav-link">Accueil</a>
-          <a href="#artisanat" className="nav-link">Artisanat</a>
-          <a href="#timeline" className="nav-link">Histoire</a>
-          <a href="#apropos" className="nav-link">À propos</a>
-        </nav>
-      )}
+              {/* Nav desktop / espace vide mobile */}
+              {!isMobile ? (
+                <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                  <a href="#" className="nav-link">Accueil</a>
+                  <a href="#artisanat" className="nav-link">Artisanat</a>
+                  <a href="#timeline" className="nav-link">Histoire</a>
+                  <a href="#apropos" className="nav-link">À propos</a>
+                </nav>
+              ) : (
+                <div />
+              )}
 
-      {/* Sur mobile : espace vide à gauche pour équilibrer */}
-      {isMobile && <div />}
+              {/* CTA + Dark mode */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <button
+                  className="btn-primary"
+                  onClick={() => router.push('/classifier')}
+                  style={{
+                    padding: isMobile ? '0.65rem 1rem' : '0.75rem 1.6rem',
+                    borderRadius: 2,
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    fontSize: isMobile ? '0.72rem' : '0.82rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
+                  <ArrowRight size={14} />
+                </button>
 
-      {/* CTA + Dark mode */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-        <button
-          className="btn-primary"
-          onClick={() => router.push('/classifier')}
-          style={{
-            padding: isMobile ? '0.65rem 1rem' : '0.75rem 1.6rem',
-            borderRadius: 2,
-            display: 'flex', alignItems: 'center', gap: 8,
-            fontSize: isMobile ? '0.72rem' : '0.82rem',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
-          <ArrowRight size={14} />
-        </button>
+                <motion.button
+                  whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
+                  onClick={toggleDark}
+                  title={dark ? 'Mode clair' : 'Mode sombre'}
+                  style={{
+                    width: 36, height: 36, borderRadius: 2, flexShrink: 0,
+                    background: dark ? 'rgba(255,255,255,0.08)' : '#F5EDD8',
+                    border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', transition: 'all 0.25s',
+                  }}
+                >
+                  <AnimatePresence mode="wait">
+                    {dark
+                      ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                          <Sun size={16} color="#B8882A" />
+                        </motion.div>
+                      : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                          <Moon size={16} color="#8C7355" />
+                        </motion.div>
+                    }
+                  </AnimatePresence>
+                </motion.button>
+              </div>
 
-        <motion.button
-          whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
-          onClick={toggleDark}
-          title={dark ? 'Mode clair' : 'Mode sombre'}
-          style={{
-            width: 36, height: 36, borderRadius: 2, flexShrink: 0,
-            background: dark ? 'rgba(255,255,255,0.08)' : '#F5EDD8',
-            border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', transition: 'all 0.25s',
-          }}
-        >
-          <AnimatePresence mode="wait">
-            {dark
-              ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <Sun size={16} color="#B8882A" />
-                </motion.div>
-              : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <Moon size={16} color="#8C7355" />
-                </motion.div>
-            }
-          </AnimatePresence>
-        </motion.button>
-      </div>
-
-    </div>
-  </div>
-</header>
+            </div>
+          </div>
+        </header>
 
         {/* HERO */}
         <section style={{ position: 'relative', overflow: 'hidden', minHeight: '90vh', display: 'flex', alignItems: 'center' }}>
@@ -501,7 +457,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ✅ MODIFICATION : STATS BAR — fond fixe sombre */}
+        {/* STATS BAR */}
         <div style={{ background: dark ? '#0A0704' : '#1A1208', padding: '3rem 0' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div className="stats-container" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -576,11 +532,7 @@ export default function HomePage() {
 
             <div style={{ position: 'relative' }}>
               {isMobile ? (
-                <div style={{
-                  paddingLeft: '1.8rem',
-                  borderLeft: '2px solid rgba(184,136,42,0.35)',
-                  display: 'flex', flexDirection: 'column', gap: '1rem',
-                }}>
+                <div style={{ paddingLeft: '1.8rem', borderLeft: '2px solid rgba(184,136,42,0.35)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {timeline.map((item, index) => (
                     <motion.div
                       key={index}
@@ -590,9 +542,7 @@ export default function HomePage() {
                       style={{ position: 'relative' }}
                     >
                       <div style={{
-                        position: 'absolute',
-                        left: '-2.05rem',
-                        top: '1.3rem',
+                        position: 'absolute', left: '-2.05rem', top: '1.3rem',
                         width: 12, height: 12,
                         borderRadius: item.highlight ? 2 : '50%',
                         background: item.highlight ? 'var(--terracotta)' : 'var(--gold)',
@@ -705,7 +655,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ✅ MODIFICATION : TÉMOIGNAGES — fond fixe sombre */}
+        {/* TÉMOIGNAGES */}
         <section style={{ padding: '8rem 0', background: dark ? '#0A0704' : '#1A1208', position: 'relative', overflow: 'hidden' }}>
           <div className="pattern-overlay" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} />
           <div style={{ position: 'absolute', top: '20%', left: '-5%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(196,98,45,0.08) 0%, transparent 70%)' }} />
@@ -730,14 +680,7 @@ export default function HomePage() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5 }}
                   className="testi-card"
-                  style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(184,136,42,0.2)',
-                    borderRadius: 4,
-                    padding: '3.5rem',
-                    position: 'relative',
-                    backdropFilter: 'blur(10px)',
-                  }}
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(184,136,42,0.2)', borderRadius: 4, padding: '3.5rem', position: 'relative', backdropFilter: 'blur(10px)' }}
                 >
                   <div className="testi-quote-icon" style={{ position: 'absolute', top: '2rem', right: '2.5rem', opacity: 0.12 }}>
                     <Quote size={64} color="var(--gold)" />
@@ -747,49 +690,19 @@ export default function HomePage() {
                       <span key={i} style={{ color: 'var(--gold-light)', fontSize: '1rem' }}>★</span>
                     ))}
                   </div>
-                  <p
-                    className="testi-text"
-                    style={{
-                      fontSize: 'clamp(1rem, 2vw, 1.35rem)',
-                      color: 'rgba(255,255,255,0.88)',
-                      lineHeight: 1.85,
-                      fontFamily: 'Cormorant Garamond, serif',
-                      fontStyle: 'italic',
-                      fontWeight: 300,
-                      marginBottom: '2.5rem',
-                      position: 'relative', zIndex: 1,
-                    }}
-                  >
+                  <p className="testi-text" style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', color: 'rgba(255,255,255,0.88)', lineHeight: 1.85, fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', fontWeight: 300, marginBottom: '2.5rem', position: 'relative', zIndex: 1 }}>
                     "{testimonials[activeTestimonial].text}"
                   </p>
                   <div className="testi-author" style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
-                    <div style={{
-                      width: 48, height: 48,
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, var(--terracotta), var(--terracotta-dark))',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1.1rem', fontWeight: 600,
-                      color: 'white', fontFamily: 'Cormorant Garamond, serif',
-                      border: '2px solid rgba(212,169,74,0.3)',
-                      flexShrink: 0,
-                    }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, var(--terracotta), var(--terracotta-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 600, color: 'white', fontFamily: 'Cormorant Garamond, serif', border: '2px solid rgba(212,169,74,0.3)', flexShrink: 0 }}>
                       {testimonials[activeTestimonial].avatar}
                     </div>
                     <div>
-                      <p style={{ fontSize: '0.95rem', fontWeight: 500, color: 'white', fontFamily: 'Jost, sans-serif', marginBottom: 3 }}>
-                        {testimonials[activeTestimonial].name}
-                      </p>
-                      <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.05em', fontFamily: 'Jost' }}>
-                        {testimonials[activeTestimonial].role}
-                      </p>
+                      <p style={{ fontSize: '0.95rem', fontWeight: 500, color: 'white', fontFamily: 'Jost, sans-serif', marginBottom: 3 }}>{testimonials[activeTestimonial].name}</p>
+                      <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.05em', fontFamily: 'Jost' }}>{testimonials[activeTestimonial].role}</p>
                     </div>
                     <div className="testi-craft-badge" style={{ marginLeft: 'auto' }}>
-                      <span style={{
-                        fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase',
-                        color: 'var(--gold)', border: '1px solid rgba(184,136,42,0.35)',
-                        padding: '4px 10px', borderRadius: 2, fontFamily: 'Jost',
-                        whiteSpace: 'nowrap',
-                      }}>
+                      <span style={{ fontSize: '0.68rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', border: '1px solid rgba(184,136,42,0.35)', padding: '4px 10px', borderRadius: 2, fontFamily: 'Jost', whiteSpace: 'nowrap' }}>
                         {testimonials[activeTestimonial].craft}
                       </span>
                     </div>
@@ -800,27 +713,12 @@ export default function HomePage() {
               <div className="testi-nav" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem' }}>
                 <div style={{ display: 'flex', gap: 8 }}>
                   {testimonials.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveTestimonial(i)}
-                      style={{
-                        width: i === activeTestimonial ? 28 : 8,
-                        height: 8, borderRadius: 4,
-                        background: i === activeTestimonial ? 'var(--gold)' : 'rgba(184,136,42,0.25)',
-                        border: 'none', cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        padding: 0,
-                      }}
-                    />
+                    <button key={i} onClick={() => setActiveTestimonial(i)} style={{ width: i === activeTestimonial ? 28 : 8, height: 8, borderRadius: 4, background: i === activeTestimonial ? 'var(--gold)' : 'rgba(184,136,42,0.25)', border: 'none', cursor: 'pointer', transition: 'all 0.3s ease', padding: 0 }} />
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={prev} className="testi-nav-btn">
-                    <ChevronLeft size={17} />
-                  </button>
-                  <button onClick={next} className="testi-nav-btn">
-                    <ChevronRight size={17} />
-                  </button>
+                  <button onClick={prev} className="testi-nav-btn"><ChevronLeft size={17} /></button>
+                  <button onClick={next} className="testi-nav-btn"><ChevronRight size={17} /></button>
                 </div>
               </div>
             </div>
@@ -852,7 +750,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ✅ MODIFICATION : FOOTER — fond fixe sombre */}
+        {/* FOOTER */}
         <footer style={{ background: dark ? '#0A0704' : '#1A1208', color: 'white', padding: '5rem 0 2.5rem' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
@@ -886,7 +784,7 @@ export default function HomePage() {
               ))}
             </div>
             <div className="gold-divider" style={{ marginBottom: '1.5rem' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
               <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', fontFamily: 'Jost, sans-serif' }}>Célébrer le patrimoine marocain à travers la technologie</p>
               <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'Jost, sans-serif' }}>© 2026 Heritage AI — Tous droits réservés</p>
             </div>
@@ -920,33 +818,17 @@ function TimelineCard({ item, dark }: { item: { century: string; year: string; t
       )}
       <div style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: '0.5rem' }}>
-          <span style={{
-            fontSize: '0.68rem', letterSpacing: '0.2em', textTransform: 'uppercase',
-            fontFamily: 'Jost', fontWeight: 500,
-            color: item.highlight ? 'rgba(255,255,255,0.7)' : 'var(--gold)',
-          }}>
+          <span style={{ fontSize: '0.68rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: 'Jost', fontWeight: 500, color: item.highlight ? 'rgba(255,255,255,0.7)' : 'var(--gold)' }}>
             {item.century}
           </span>
-          <span style={{
-            fontSize: '0.62rem', color: item.highlight ? 'rgba(255,255,255,0.45)' : 'var(--muted)',
-            fontFamily: 'Jost',
-          }}>
+          <span style={{ fontSize: '0.62rem', color: item.highlight ? 'rgba(255,255,255,0.45)' : 'var(--muted)', fontFamily: 'Jost' }}>
             {item.year}
           </span>
         </div>
-        <h4 style={{
-          fontSize: '1.25rem', fontWeight: 600,
-          fontFamily: 'Cormorant Garamond, serif',
-          color: item.highlight ? 'white' : 'var(--ink)',
-          marginBottom: '0.5rem', lineHeight: 1.3,
-        }}>
+        <h4 style={{ fontSize: '1.25rem', fontWeight: 600, fontFamily: 'Cormorant Garamond, serif', color: item.highlight ? 'white' : 'var(--ink)', marginBottom: '0.5rem', lineHeight: 1.3 }}>
           {item.title}
         </h4>
-        <p style={{
-          fontSize: '0.88rem', lineHeight: 1.7,
-          color: item.highlight ? 'rgba(255,255,255,0.78)' : 'var(--muted)',
-          fontFamily: 'Jost', fontWeight: 300,
-        }}>
+        <p style={{ fontSize: '0.88rem', lineHeight: 1.7, color: item.highlight ? 'rgba(255,255,255,0.78)' : 'var(--muted)', fontFamily: 'Jost', fontWeight: 300 }}>
           {item.desc}
         </p>
       </div>
