@@ -521,7 +521,7 @@ export default function ClassifierPage() {
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
 
     {/* LIGNE 1 : Logo */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0.9rem 0 0.5rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '0.9rem 0 0.5rem' }}>
       <div style={{ width: 36, height: 36, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
         <span style={{ color: 'white', fontSize: '0.95rem' }}>◆</span>
       </div>

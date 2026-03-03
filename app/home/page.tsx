@@ -381,78 +381,82 @@ export default function HomePage() {
         )}
 
         {/* HEADER */}
-        <header style={{ background: dark ? '#1A1208' : 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50, transition: 'background 0.3s' }}>
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0' }}>
-              {/* Logo */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
-                  <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
-                </div>
-                <div>
-                  <h1 style={{ fontSize: '1.6rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1, fontFamily: 'Cormorant Garamond, serif' }}>Heritage AI</h1>
-                  <p style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Artisanat Marocain</p>
-                </div>
-              </div>
+       {/* HEADER */}
+<header style={{ background: dark ? '#1A1208' : 'white', borderBottom: '1px solid rgba(184,136,42,0.2)', position: 'sticky', top: 0, zIndex: 50, transition: 'background 0.3s' }}>
+  <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
 
-              {/* Nav — desktop only */}
-              {!isMobile && (
-                <nav style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-                  <a href="#" className="nav-link">Accueil</a>
-                  <a href="#artisanat" className="nav-link">Artisanat</a>
-                  <a href="#timeline" className="nav-link">Histoire</a>
-                  <a href="#apropos" className="nav-link">À propos</a>
-                </nav>
-              )}
+    {/* LIGNE 1 : Logo centré */}
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '0.9rem 0 0.5rem' }}>
+      <div style={{ width: 38, height: 38, background: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, flexShrink: 0 }}>
+        <span style={{ color: 'white', fontSize: '1rem' }}>◆</span>
+      </div>
+      <div>
+        <h1 style={{ fontSize: '1.6rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1, fontFamily: 'Cormorant Garamond, serif' }}>Heritage AI</h1>
+        <p style={{ fontSize: '0.62rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Artisanat Marocain</p>
+      </div>
+    </div>
 
-              {/* ✅ MODIFICATION : CTA en premier, dark mode à l'extrême droite */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+    {/* LIGNE 2 : Nav (desktop) + CTA + Dark mode */}
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0 0.9rem', borderTop: `1px solid ${dark ? 'rgba(184,136,42,0.15)' : 'rgba(184,136,42,0.1)'}` }}>
 
-                {/* CTA — EN PREMIER */}
-                <button
-                  className="btn-primary"
-                  onClick={() => router.push('/classifier')}
-                  style={{
-                    padding: isMobile ? '0.75rem 1rem' : '0.85rem 2rem',
-                    borderRadius: 2,
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    fontSize: isMobile ? '0.72rem' : '0.85rem',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
-                  <ArrowRight size={14} />
-                </button>
+      {/* Nav desktop */}
+      {!isMobile && (
+        <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+          <a href="#" className="nav-link">Accueil</a>
+          <a href="#artisanat" className="nav-link">Artisanat</a>
+          <a href="#timeline" className="nav-link">Histoire</a>
+          <a href="#apropos" className="nav-link">À propos</a>
+        </nav>
+      )}
 
-                {/* ── BOUTON DARK MODE — EXTRÊME DROITE ── */}
-                <motion.button
-                  whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
-                  onClick={toggleDark}
-                  title={dark ? 'Mode clair' : 'Mode sombre'}
-                  style={{
-                    width: 38, height: 38, borderRadius: 2, flexShrink: 0,
-                    background: dark ? 'rgba(255,255,255,0.08)' : '#F5EDD8',
-                    border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', transition: 'all 0.25s',
-                  }}
-                >
-                  <AnimatePresence mode="wait">
-                    {dark
-                      ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                          <Sun size={17} color="#B8882A" />
-                        </motion.div>
-                      : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                          <Moon size={17} color="#8C7355" />
-                        </motion.div>
-                    }
-                  </AnimatePresence>
-                </motion.button>
+      {/* Sur mobile : espace vide à gauche pour équilibrer */}
+      {isMobile && <div />}
 
-              </div>
-            </div>
-          </div>
-        </header>
+      {/* CTA + Dark mode */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <button
+          className="btn-primary"
+          onClick={() => router.push('/classifier')}
+          style={{
+            padding: isMobile ? '0.65rem 1rem' : '0.75rem 1.6rem',
+            borderRadius: 2,
+            display: 'flex', alignItems: 'center', gap: 8,
+            fontSize: isMobile ? '0.72rem' : '0.82rem',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
+          <ArrowRight size={14} />
+        </button>
+
+        <motion.button
+          whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
+          onClick={toggleDark}
+          title={dark ? 'Mode clair' : 'Mode sombre'}
+          style={{
+            width: 36, height: 36, borderRadius: 2, flexShrink: 0,
+            background: dark ? 'rgba(255,255,255,0.08)' : '#F5EDD8',
+            border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', transition: 'all 0.25s',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {dark
+              ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <Sun size={16} color="#B8882A" />
+                </motion.div>
+              : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <Moon size={16} color="#8C7355" />
+                </motion.div>
+            }
+          </AnimatePresence>
+        </motion.button>
+      </div>
+
+    </div>
+  </div>
+</header>
 
         {/* HERO */}
         <section style={{ position: 'relative', overflow: 'hidden', minHeight: '90vh', display: 'flex', alignItems: 'center' }}>
