@@ -354,63 +354,79 @@ export default function HomePage() {
             </div>
 
             {/* LIGNE 2 : Nav + CTA + Dark mode */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0 0.9rem', borderTop: `1px solid ${dark ? 'rgba(184,136,42,0.15)' : 'rgba(184,136,42,0.1)'}` }}>
+            {/* LIGNE 2 : Nav + CTA + Dark mode */}
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0 0.9rem', borderTop: `1px solid ${dark ? 'rgba(184,136,42,0.15)' : 'rgba(184,136,42,0.1)'}` }}>
 
-              {/* Nav desktop / espace vide mobile */}
-              {!isMobile ? (
-                <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                  <a href="#" className="nav-link">Accueil</a>
-                  <a href="#artisanat" className="nav-link">Artisanat</a>
-                  <a href="#timeline" className="nav-link">Histoire</a>
-                  <a href="#apropos" className="nav-link">À propos</a>
-                </nav>
-              ) : (
-                <div />
-              )}
+  {/* CTA à l'extrême gauche sur mobile, Nav à gauche sur desktop */}
+  {!isMobile ? (
+    <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+      <a href="#" className="nav-link">Accueil</a>
+      <a href="#artisanat" className="nav-link">Artisanat</a>
+      <a href="#timeline" className="nav-link">Histoire</a>
+      <a href="#apropos" className="nav-link">À propos</a>
+    </nav>
+  ) : (
+    <button
+      className="btn-primary"
+      onClick={() => router.push('/classifier')}
+      style={{
+        padding: '0.65rem 1rem',
+        borderRadius: 2,
+        display: 'flex', alignItems: 'center', gap: 8,
+        fontSize: '0.72rem',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      Classifier
+      <ArrowRight size={14} />
+    </button>
+  )}
 
-              {/* CTA + Dark mode */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <button
-                  className="btn-primary"
-                  onClick={() => router.push('/classifier')}
-                  style={{
-                    padding: isMobile ? '0.65rem 1rem' : '0.75rem 1.6rem',
-                    borderRadius: 2,
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    fontSize: isMobile ? '0.72rem' : '0.82rem',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {isMobile ? 'Classifier' : 'Classifier une Œuvre'}
-                  <ArrowRight size={14} />
-                </button>
+  {/* Dark mode + CTA desktop à droite */}
+  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+    {!isMobile && (
+      <button
+        className="btn-primary"
+        onClick={() => router.push('/classifier')}
+        style={{
+          padding: '0.75rem 1.6rem',
+          borderRadius: 2,
+          display: 'flex', alignItems: 'center', gap: 8,
+          fontSize: '0.82rem',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        Classifier une Œuvre
+        <ArrowRight size={14} />
+      </button>
+    )}
 
-                <motion.button
-                  whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
-                  onClick={toggleDark}
-                  title={dark ? 'Mode clair' : 'Mode sombre'}
-                  style={{
-                    width: 36, height: 36, borderRadius: 2, flexShrink: 0,
-                    background: dark ? 'rgba(255,255,255,0.08)' : '#F5EDD8',
-                    border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', transition: 'all 0.25s',
-                  }}
-                >
-                  <AnimatePresence mode="wait">
-                    {dark
-                      ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                          <Sun size={16} color="#B8882A" />
-                        </motion.div>
-                      : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                          <Moon size={16} color="#8C7355" />
-                        </motion.div>
-                    }
-                  </AnimatePresence>
-                </motion.button>
-              </div>
+    <motion.button
+      whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
+      onClick={toggleDark}
+      title={dark ? 'Mode clair' : 'Mode sombre'}
+      style={{
+        width: 36, height: 36, borderRadius: 2, flexShrink: 0,
+        background: dark ? 'rgba(255,255,255,0.08)' : '#F5EDD8',
+        border: `1px solid ${dark ? 'rgba(184,136,42,0.35)' : 'rgba(184,136,42,0.25)'}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', transition: 'all 0.25s',
+      }}
+    >
+      <AnimatePresence mode="wait">
+        {dark
+          ? <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+              <Sun size={16} color="#B8882A" />
+            </motion.div>
+          : <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+              <Moon size={16} color="#8C7355" />
+            </motion.div>
+        }
+      </AnimatePresence>
+    </motion.button>
+  </div>
 
-            </div>
+</div>
           </div>
         </header>
 
