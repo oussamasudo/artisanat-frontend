@@ -527,7 +527,7 @@ export default function ClassifierPage() {
       </div>
       <div>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: headingColor, lineHeight: 1, fontFamily: 'Cormorant Garamond, serif' }}>Heritage AI</h1>
-        <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Classificateur</p>
+        <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', fontFamily: 'Jost, sans-serif' }}>Artisanat Marocain</p>
       </div>
     </div>
 
