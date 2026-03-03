@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react"
 import Link from 'next/link'
 import {
   Upload, Camera, Loader2, CheckCircle, Sparkles, ArrowLeft, X,
-  RefreshCw, MapPin, Image as ImageIcon, Moon, Sun, Share2, Download, Copy, Twitter, Check
+  RefreshCw, MapPin, Image as ImageIcon, Share2, Download, Copy, Twitter, Check
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -383,7 +383,7 @@ export default function ClassifierPage() {
   const [showGallery, setShowGallery] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [classificationCount, setClassificationCount] = useState(0)
-  const { dark, toggle: toggleDark } = useDarkMode()
+  const { dark } = useDarkMode()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
