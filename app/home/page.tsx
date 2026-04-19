@@ -384,22 +384,7 @@ export default function HomePage() {
 
   {/* Dark mode + CTA desktop à droite */}
   <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-    {!isMobile && (
-      <button
-        className="btn-primary"
-        onClick={() => router.push('/classifier')}
-        style={{
-          padding: '0.75rem 1.6rem',
-          borderRadius: 2,
-          display: 'flex', alignItems: 'center', gap: 8,
-          fontSize: '0.82rem',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        Classifier une Œuvre
-        <ArrowRight size={14} />
-      </button>
-    )}
+    {!isMobile}
 
     <motion.button
       whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}
@@ -663,9 +648,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 ))}
-                <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="btn-primary" onClick={() => router.push('/classifier')} style={{ padding: '1.1rem 2.2rem', borderRadius: 2, marginTop: '1rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                  Classifier votre Découverte <ArrowRight size={15} />
-                </motion.button>
+                
               </motion.div>
             </div>
           </div>
